@@ -262,6 +262,7 @@ public class MainActivity extends Activity {
                 ((JSONObject) pixels_array.get(i)).put("r", (int) (Math.random() * 255.0f));
                 ((JSONObject) pixels_array.get(i)).put("g", (int) (Math.random() * 255.0f));
                 ((JSONObject) pixels_array.get(i)).put("b", (int) (Math.random() * 255.0f));
+                ((JSONObject) pixels_array.get(i)).put("a", (int) (Math.random() * 255.0f));
             }
             handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
         } catch (Exception e) {
@@ -279,6 +280,7 @@ public class MainActivity extends Activity {
                 ((JSONObject) pixels_array.get(i)).put("r", (int) (Math.random() * 255.0f));
                 ((JSONObject) pixels_array.get(i)).put("g", (int) (Math.random() * 255.0f));
                 ((JSONObject) pixels_array.get(i)).put("b", (int) (Math.random() * 255.0f));
+                ((JSONObject) pixels_array.get(i)).put("a", (int) (Math.random() * 255.0f));
             }
             handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
         } catch (JSONException e) {
@@ -397,33 +399,42 @@ public class MainActivity extends Activity {
         ragnatela[j][2]=0;
         ragnatela[j][3]=0;
 
-        ragnatela[j+1][0]=100;// coloriamo i primi 3 led verdi
+        ragnatela[j+1][0]=50;// coloriamo i primi 3 led verdi
         ragnatela[j+1][1]=0;
         ragnatela[j+1][2]=255;
         ragnatela[j+1][3]=0;
 
-        ragnatela[j+2][0]=255;// coloriamo i primi 3 led verdi
+        ragnatela[j+2][0]=100;// coloriamo i primi 3 led verdi
         ragnatela[j+2][1]=0;
         ragnatela[j+2][2]=255;
         ragnatela[j+2][3]=0;
 
+        ragnatela[j+3][0]=255;// coloriamo i primi 3 led verdi
+        ragnatela[j+3][1]=0;
+        ragnatela[j+3][2]=255;
+        ragnatela[j+3][3]=0;
+
         // anche gli ultimi si accendono
 
-        ragnatela[l_primo_t-j][0]=0;// coloriamo i primi 3 led verdi
-        ragnatela[l_primo_t-j][1]=0;
-        ragnatela[l_primo_t-j][2]=0;
-        ragnatela[l_primo_t-j][3]=0;
-
-        ragnatela[l_primo_t-j-1][0]=100;// coloriamo i primi 3 led verdi
+        ragnatela[l_primo_t-j-1][0]=0;// coloriamo i primi 3 led verdi
         ragnatela[l_primo_t-j-1][1]=0;
-        ragnatela[l_primo_t-j-1][2]=255;
+        ragnatela[l_primo_t-j-1][2]=0;
         ragnatela[l_primo_t-j-1][3]=0;
 
-        ragnatela[l_primo_t-j-2][0]=255;// coloriamo i primi 3 led verdi
-        ragnatela[l_primo_t-j-2][1]=0;
-        ragnatela[l_primo_t-j-2][2]=255;
-        ragnatela[l_primo_t-j-2][3]=0;
+        ragnatela[l_primo_t-j-1-1][0]=50;// coloriamo i primi 3 led verdi
+        ragnatela[l_primo_t-j-1-1][1]=0;
+        ragnatela[l_primo_t-j-1-1][2]=255;
+        ragnatela[l_primo_t-j-1-1][3]=0;
 
+        ragnatela[l_primo_t-j-2-1][0]=100;// coloriamo i primi 3 led verdi
+        ragnatela[l_primo_t-j-2-1][1]=0;
+        ragnatela[l_primo_t-j-2-1][2]=255;
+        ragnatela[l_primo_t-j-2-1][3]=0;
+
+        ragnatela[l_primo_t-j-3-1][0]=255;// coloriamo i primi 3 led verdi
+        ragnatela[l_primo_t-j-3-1][1]=0;
+        ragnatela[l_primo_t-j-3-1][2]=255;
+        ragnatela[l_primo_t-j-3-1][3]=0;
         try{
             for (int i = 0; i < 1072; i++) {
                 tmp = new JSONObject();
@@ -449,15 +460,20 @@ public class MainActivity extends Activity {
         ragnatela[l_primo_t/2-j][2]=0;
         ragnatela[l_primo_t/2-j][3]=0;
 
-        ragnatela[l_primo_t/2-j-1][0]=100;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2-j-1][0]=20;// coloriamo i primi 3 led rossi
         ragnatela[l_primo_t/2-j-1][1]=255;
         ragnatela[l_primo_t/2-j-1][2]=0;
         ragnatela[l_primo_t/2-j-1][3]=0;
 
-        ragnatela[l_primo_t/2-j-2][0]=255;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2-j-2][0]=80;// coloriamo i primi 3 led rossi
         ragnatela[l_primo_t/2-j-2][1]=255;
         ragnatela[l_primo_t/2-j-2][2]=0;
         ragnatela[l_primo_t/2-j-2][3]=0;
+
+        ragnatela[l_primo_t/2-j-3][0]=255;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2-j-3][1]=255;
+        ragnatela[l_primo_t/2-j-3][2]=0;
+        ragnatela[l_primo_t/2-j-3][3]=0;
 
         // anche gli ultimi si accendono
 
@@ -466,15 +482,20 @@ public class MainActivity extends Activity {
         ragnatela[l_primo_t/2+j][2]=0;
         ragnatela[l_primo_t/2+j][3]=0;
 
-        ragnatela[l_primo_t/2+j+1][0]=100;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2+j+1][0]=20;// coloriamo i primi 3 led rossi
         ragnatela[l_primo_t/2+j+1][1]=255;
         ragnatela[l_primo_t/2+j+1][2]=0;
         ragnatela[l_primo_t/2+j+1][3]=0;
 
-        ragnatela[l_primo_t/2+j+2][0]=255;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2+j+2][0]=80;// coloriamo i primi 3 led rossi
         ragnatela[l_primo_t/2+j+2][1]=255;
         ragnatela[l_primo_t/2+j+2][2]=0;
         ragnatela[l_primo_t/2+j+2][3]=0;
+
+        ragnatela[l_primo_t/2+j+3][0]=255;// coloriamo i primi 3 led rossi
+        ragnatela[l_primo_t/2+j+3][1]=255;
+        ragnatela[l_primo_t/2+j+3][2]=0;
+        ragnatela[l_primo_t/2+j+3][3]=0;
 
         try{
             for (int i = 0; i < 1072; i++) {
@@ -503,18 +524,22 @@ public class MainActivity extends Activity {
                     tmp.put("g", 255);
                     tmp.put("b", 0);
                     tmp.put("r", 0);
+                    tmp.put("a", 100);
                 } else if (i < 613) {
                     tmp.put("r", 255);
                     tmp.put("g", 0);
                     tmp.put("b", 0);
+                    tmp.put("a", 255);
                 } else if (i < 791) {
                     tmp.put("b", 255);
                     tmp.put("g", 0);
                     tmp.put("r", 0);
+                    tmp.put("a", 255);
                 } else {
                     tmp.put("b", 255);
                     tmp.put("g", 0);
                     tmp.put("r", 255);
+                    tmp.put("a", 255);
                 }
                 pixels_array.put(tmp);
             }
