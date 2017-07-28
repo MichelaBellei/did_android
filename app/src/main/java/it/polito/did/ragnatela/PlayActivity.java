@@ -34,8 +34,9 @@ public class PlayActivity extends Activity {
 
     Unbinder unbinder;
 
-    private String host_url = "192.168.1.32";
+    private String host_url = "192.168.1.67";
     private int host_port = 8080;
+
 
    /* @BindView(R.id.set_display_pixels)
     Button set_display_pixels;
@@ -53,13 +54,13 @@ public class PlayActivity extends Activity {
     Button changeColorButton;
 
     @BindView(R.id.ramo1_button)
-    Button ramo1Button;*/
+    Button ramo1Button;
 
     @BindViews({R.id.first_byte_ip, R.id.second_byte_ip, R.id.third_byte_ip, R.id.fourth_byte_ip})
     List<EditText> ip_address_bytes;
 
     @BindView(R.id.host_port)
-    EditText hostPort;
+    EditText hostPort; */
 
     private TextWatcher myIpTextWatcher;
     private JSONArray pixels_array;
@@ -142,6 +143,15 @@ public class PlayActivity extends Activity {
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_up);
                         posizioneAttuale--;
+                        setDisplayPixels();
+                        try {
+                            for (int j = 0; j < (l_primo_t / 2); j++) {
+                                mezzo_proiettile = setProiettile(j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
@@ -160,7 +170,7 @@ public class PlayActivity extends Activity {
             }
         });
 
-        myIpTextWatcher = new TextWatcher() {
+      /*  myIpTextWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -175,7 +185,7 @@ public class PlayActivity extends Activity {
                     randomColors.setEnabled(true);
                     set_display_pixels.setEnabled(true);
                     changeColorButton.setEnabled(true);
-                    ramo1Button.setEnabled(true);*/
+                    ramo1Button.setEnabled(true);
                     Message msg = mNetworkHandler.obtainMessage();
                     msg.what = NetworkThread.SET_SERVER_DATA;
                     msg.obj = host_url;
@@ -195,7 +205,7 @@ public class PlayActivity extends Activity {
             ip_byte.addTextChangedListener(myIpTextWatcher);
         }
 
-        hostPort.addTextChangedListener(myIpTextWatcher);
+        hostPort.addTextChangedListener(myIpTextWatcher); */
 
         pixels_array = preparePixelsArray();
 
@@ -210,6 +220,7 @@ public class PlayActivity extends Activity {
 
         try {
             initalizePixels();
+            spegniTutto();
         } catch (JSONException e) {
             //Non dovrebbe avere problemi
             e.printStackTrace();
@@ -339,7 +350,7 @@ public class PlayActivity extends Activity {
             //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
-                    R.drawable.cannone_blu_red_2);
+                    R.drawable.cannone5_blu);
             tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
@@ -375,7 +386,7 @@ public class PlayActivity extends Activity {
         mNetworkHandler = mNetworkThread.getNetworkHandler();
     }
 
-    private boolean checkCorrectIp() {
+    /*private boolean checkCorrectIp() {
         StringBuilder sb = new StringBuilder();
         int port;
 
@@ -396,10 +407,10 @@ public class PlayActivity extends Activity {
             return true;
         } else
             return false;
-    }
+    } */
 
     //from http://stackoverflow.com/questions/4581877/validating-ipv4-string-in-java
-    public static boolean validIP(String ip) {
+   /* public static boolean validIP(String ip) {
         try {
             if (ip == null || ip.isEmpty()) {
                 return false;
@@ -444,7 +455,7 @@ public class PlayActivity extends Activity {
                 mNetworkHandler = null;
             }
         }
-    }
+    } */
 
     /*
     @OnClick(R.id.random_colors)
@@ -648,7 +659,7 @@ public class PlayActivity extends Activity {
         ragnatela[l_primo_t - j - 2][3] = 0;
 
         try {
-            for (int i = 0; i < 1072; i++) {
+            for (int i = 0; i < 51; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
