@@ -65,7 +65,7 @@ public class PlayActivity extends Activity {
     private TextWatcher myIpTextWatcher;
     private JSONArray pixels_array;
 
-    private JSONArray primo_t, secondo_t, terzo_t, mezzo_proiettile, mezza_bomba, restanti, quarto_t, quinto_t, primo_c, secondo_c, terzo_c;
+    private JSONArray primo_t, secondo_t, terzo_t, mezzo_proiettile, mezzo_proiettile2, mezza_bomba, restanti, quarto_t, quinto_t, primo_c, secondo_c, terzo_c;
 
     private Handler mNetworkHandler, mMainHandler;
 
@@ -146,7 +146,7 @@ public class PlayActivity extends Activity {
                         setDisplayPixels();
                         try {
                             for (int j = 0; j < (l_primo_t / 2); j++) {
-                                mezzo_proiettile = setProiettile(j);
+                                mezzo_proiettile = setProiettileRamo1(j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
                             }
                         } catch (Exception e) {
@@ -156,6 +156,14 @@ public class PlayActivity extends Activity {
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
                         posizioneAttuale--;
+                        try {
+                            for (int j = 0; j < (l_secondo_t / 2); j++) {
+                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
@@ -622,7 +630,7 @@ public class PlayActivity extends Activity {
         msg.sendToTarget();
     }
 
-    JSONArray setProiettile(int j) {//muoviamo il proiettile in su
+    JSONArray setProiettileRamo1(int j) {//muoviamo il proiettile in su
         JSONObject tmp;
         JSONArray mezzo_proiettile = new JSONArray();
 
@@ -659,7 +667,7 @@ public class PlayActivity extends Activity {
         ragnatela[l_primo_t - j - 2][3] = 0;
 
         try {
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 52; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
@@ -672,6 +680,58 @@ public class PlayActivity extends Activity {
             // No errors expected here
         }
         return mezzo_proiettile;
+    }
+
+    JSONArray setProiettileRamo2(int j, int count) {//muoviamo il proiettile in su
+        JSONObject tmp;
+        JSONArray mezzo_proiettile2 = new JSONArray();
+
+        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[j+count][1] = 0;
+        ragnatela[j+count][2] = 0;
+        ragnatela[j+count][3] = 0;
+
+        ragnatela[j +count+ 1][0] = 100;// coloriamo i primi 3 led verdi
+        ragnatela[j +count+ 1][1] = 0;
+        ragnatela[j +count+ 1][2] = 255;
+        ragnatela[j +count+ 1][3] = 0;
+
+        ragnatela[j + count+2][0] = 255;// coloriamo i primi 3 led verdi
+        ragnatela[j + count+2][1] = 0;
+        ragnatela[j + count+2][2] = 255;
+        ragnatela[j + count+2][3] = 0;
+
+        // anche gli ultimi si accendono
+
+        ragnatela[j+l_secondo_t - count+1][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[j+l_secondo_t - count+1][1] = 0;
+        ragnatela[j+l_secondo_t - count+1][2] = 0;
+        ragnatela[j+l_secondo_t - count+1][3] = 0;
+
+        ragnatela[j+l_secondo_t - count ][0] = 100;// coloriamo i primi 3 led verdi
+        ragnatela[j+l_secondo_t - count ][1] = 0;
+        ragnatela[j+l_secondo_t - count ][2] = 255;
+        ragnatela[j+l_secondo_t - count ][3] = 0;
+
+        ragnatela[j+l_secondo_t - count - 1][0] = 255;// coloriamo i primi 3 led verdi
+        ragnatela[j+l_secondo_t - count - 1][1] = 0;
+        ragnatela[j+l_secondo_t - count - 1][2] = 255;
+        ragnatela[j+l_secondo_t - count - 1][3] = 0;
+
+        try {
+            for (int i = 0; i < 186; i++) {
+                tmp = new JSONObject();
+                tmp.put("a", ragnatela[i][0]);
+                tmp.put("r", ragnatela[i][1]);
+                tmp.put("g", ragnatela[i][2]);
+                tmp.put("b", ragnatela[i][3]);
+
+                mezzo_proiettile2.put(tmp);
+            }
+        } catch (JSONException exception) {
+            // No errors expected here
+        }
+        return mezzo_proiettile2;
     }
 
     JSONArray setBomba(int j) {//muoviamo il proiettile in giù
