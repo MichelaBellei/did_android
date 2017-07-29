@@ -1,7 +1,6 @@
 package it.polito.did.ragnatela;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -9,11 +8,9 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,12 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class PlayActivity extends Activity {
@@ -89,7 +81,7 @@ public class PlayActivity extends Activity {
         setContentView(R.layout.activity_play);
         unbinder = ButterKnife.bind(this);
 
-      /*  set_display_pixels.setEnabled(false);
+         /*  set_display_pixels.setEnabled(false);
         randomColors.setEnabled(false);
         moveBackwardButton.setEnabled(false);
         moveForwardButton.setEnabled(false);
@@ -106,28 +98,29 @@ public class PlayActivity extends Activity {
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (posizioneAttuale){
+                posizioneAttuale++;
+                if(posizioneAttuale==6){
+                    posizioneAttuale=1;
+                }
+                setDisplayPixels();
+                switch (posizioneAttuale) {
                     case 1:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_up);
-                        posizioneAttuale++;
+                        imageCannone.setImageResource(R.drawable.cannone_up);
                         break;
                     case 2:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_down);
-                        posizioneAttuale++;
+                        imageCannone.setImageResource(R.drawable.cannone_dx_up);
                         break;
                     case 3:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
-                        posizioneAttuale++;
+                        imageCannone.setImageResource(R.drawable.cannone_dx_down);
                         break;
                     case 4:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
-                        posizioneAttuale++;
+                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
                         break;
                     case 5:
-                        imageCannone.setImageResource(R.drawable.cannone_up);
-                        posizioneAttuale=1;
+                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
                         break;
                 }
+
 
             }
         });
@@ -135,15 +128,14 @@ public class PlayActivity extends Activity {
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                posizioneAttuale--;
+                if(posizioneAttuale==0){
+                    posizioneAttuale=5;
+                }
+                setDisplayPixels();
                 switch (posizioneAttuale){
                     case 1:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
-                        posizioneAttuale=5;
-                        break;
-                    case 2:
                         imageCannone.setImageResource(R.drawable.cannone_up);
-                        posizioneAttuale--;
-                        setDisplayPixels();
                         try {
                             for (int j = 0; j < (l_primo_t / 2); j++) {
                                 mezzo_proiettile = setProiettileRamo1(j);
@@ -153,9 +145,8 @@ public class PlayActivity extends Activity {
                             e.printStackTrace();
                         }
                         break;
-                    case 3:
+                    case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
-                        posizioneAttuale--;
                         try {
                             for (int j = 0; j < (l_secondo_t / 2); j++) {
                                 mezzo_proiettile2 = setProiettileRamo2(l_primo_t,j);
@@ -165,15 +156,18 @@ public class PlayActivity extends Activity {
                             e.printStackTrace();
                         }
                         break;
-                    case 4:
+                    case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
-                        posizioneAttuale--;
+
+                        break;
+                    case 4:
+                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
                         break;
                     case 5:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
-                        posizioneAttuale--;
+                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
                         break;
                 }
+
 
             }
         });
@@ -229,6 +223,7 @@ public class PlayActivity extends Activity {
         try {
             initalizePixels();
             spegniTutto();
+            setDisplayPixels();
         } catch (JSONException e) {
             //Non dovrebbe avere problemi
             e.printStackTrace();
@@ -358,7 +353,35 @@ public class PlayActivity extends Activity {
             //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
-                    R.drawable.cannone5_blu);
+                    R.drawable.cannone_blu_up);
+            switch(posizioneAttuale){
+                case 1:
+                     tempBMP = BitmapFactory.decodeResource(
+                        getResources(),
+                        R.drawable.cannone_blu_up);
+                    break;
+                case 2:
+                     tempBMP = BitmapFactory.decodeResource(
+                            getResources(),
+                            R.drawable.diag_dx_up);
+                    break;
+                case 3:
+                    tempBMP = BitmapFactory.decodeResource(
+                            getResources(),
+                            R.drawable.diag_dx_down);
+                    break;
+                case 4:
+                    tempBMP = BitmapFactory.decodeResource(
+                            getResources(),
+                            R.drawable.diag_sx_down);
+                    break;
+                case 5:
+                    tempBMP = BitmapFactory.decodeResource(
+                            getResources(),
+                            R.drawable.diag_sx_up);
+                    break;
+            }
+
             tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
