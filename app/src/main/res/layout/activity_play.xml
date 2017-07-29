@@ -3,11 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_play"
     android:orientation="vertical"
     android:weightSum="1">
 
 
-    <TextView
+   <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Server IP address and port" />
@@ -72,83 +73,109 @@
             android:hint="8080"
             android:inputType="number" />
 
-    </LinearLayout>
+    </LinearLayout> -->
+
+    <ImageView
+        android:id="@+id/imageCannone"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_marginLeft="255dp"
+        android:layout_marginTop="65dp"
+        android:src="@drawable/cannone_up"/>
+
 
     <TextView
         android:id="@+id/txtTimerSecond"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="-150dp"
+        android:layout_marginLeft="570dp"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000" />
+        android:textColor="#80c3ee"
+        android:textSize="30sp"/>
 
     <Button
-        android:id="@+id/set_display_pixels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Random Display colors"
-        android:layout_marginTop="50dp"
-        android:textSize="22sp" />
-
+        android:id="@+id/leftButton"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_sx"/>
 
     <Button
-        android:id="@+id/highlight_components_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginTop="50dp"
-        android:text="Highlight components"
-        android:textSize="22sp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal">
-
+        android:id="@+id/rightButton"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginLeft="465dp"
+        android:layout_marginTop="-220dp"
+        android:background="@drawable/button_dx" />
+    <!--
         <Button
-            android:id="@+id/move_backward_button"
+            android:id="@+id/set_display_pixels"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="1° proiettile"
+            android:layout_height="wrap_content"
+            android:text="Random Display colors"
+            android:layout_marginTop="50dp"
             android:textSize="22sp" />
 
-        <View
-            android:layout_width="22dp"
-            android:layout_height="match_parent" />
 
         <Button
-            android:id="@+id/move_forward_button"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="1° bomba"
-            android:textSize="22sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ramo1_button"
+            android:id="@+id/highlight_components_button"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginTop="50dp"
-            android:text="Spegni tutto"
+            android:text="Highlight components"
             android:textSize="22sp" />
-        <View
-            android:layout_width="24dp"
-            android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/random_colors"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="Random colors"
-            android:textSize="22sp" />
-    </LinearLayout>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/move_backward_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="1° proiettile"
+                android:textSize="22sp" />
+
+            <View
+                android:layout_width="22dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/move_forward_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="1° bomba"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/ramo1_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="50dp"
+                android:text="Spegni tutto"
+                android:textSize="22sp" />
+            <View
+                android:layout_width="24dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/random_colors"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="50dp"
+                android:text="Random colors"
+                android:textSize="22sp" />
+        </LinearLayout> -->
 
 
 </LinearLayout>
