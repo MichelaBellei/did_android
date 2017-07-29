@@ -659,7 +659,7 @@ public class PlayActivity extends Activity {
         ragnatela[l_primo_t - j - 2][3] = 0;
 
         try {
-            for (int i = 0; i < 51; i++) {
+            for (int i = 0; i < 500; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
