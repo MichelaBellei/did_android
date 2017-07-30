@@ -91,6 +91,7 @@
         android:layout_marginTop="-150dp"
         android:layout_marginLeft="570dp"
         android:gravity="center"
+        android:text="60"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#80c3ee"
         android:textSize="30sp"/>

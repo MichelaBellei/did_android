@@ -70,10 +70,11 @@ public class PlayActivity extends Activity {
     private TextView tvSecond;
     private Handler handler;
     private Runnable runnable;
-    int seconds = 62;
+    int seconds = 60;
     private Button buttonRight, buttonLeft;
     private ImageView imageCannone;
     private int posizioneAttuale = 1;
+    private boolean game_over=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,8 @@ public class PlayActivity extends Activity {
         ramo1Button.setEnabled(false); */
 
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
-        countDownStart();
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(),"fonts/wareagle.ttf");
+        tvSecond.setTypeface(myTypeface);
 
         imageCannone = (ImageView) findViewById(R.id.imageCannone);
         buttonLeft = (Button) findViewById(R.id.leftButton);
@@ -223,12 +225,13 @@ public class PlayActivity extends Activity {
         try {
             initalizePixels();
             spegniTutto();
-            setDisplayPixels();
+            setDisplayThree();
         } catch (JSONException e) {
             //Non dovrebbe avere problemi
             e.printStackTrace();
         }
     }
+
 
     public void countDownStart() {
         handler = new Handler();
@@ -240,15 +243,14 @@ public class PlayActivity extends Activity {
 
                         if(seconds>0) {
                             seconds = seconds - 1;
-                            Typeface myTypeface = Typeface.createFromAsset(getAssets(),"fonts/wareagle.ttf");
-                            // TextView waitingTimeView = (TextView) findViewById(R.id.txtTimerSecond);
-                            tvSecond.setTypeface(myTypeface);
                             tvSecond.setText("" + String.format("%02d", seconds));
                             if (seconds <= 20) {
                                 tvSecond.setTextColor(Color.RED);
                             }
                         }
                         else{
+                            game_over=true;
+                            setDisplayPixels();
                             //chiamare activity classifica e game over
                         }
 
@@ -382,6 +384,11 @@ public class PlayActivity extends Activity {
                     break;
             }
 
+            if(game_over==true){
+                tempBMP = BitmapFactory.decodeResource(
+                        getResources(),
+                        R.drawable.game_over);
+            }
             tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
@@ -402,6 +409,192 @@ public class PlayActivity extends Activity {
             }
 
             handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
+        } catch (
+                JSONException e)
+
+        {
+            // There should be no Exception
+        }
+
+    }
+
+    void setDisplayThree() {
+        try {
+            JSONArray pixels_array = new JSONArray();
+
+            // BitmapFactory.Options options = new BitmapFactory.Options();
+            //options.outHeight = 32;
+            //options.outWidth = 32;
+            Bitmap tempBMP = BitmapFactory.decodeResource(
+                    getResources(),
+                    R.drawable.three);
+
+            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
+            tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
+            for (int i = 0; i < pixels.length; i++) {
+                int pixel = pixels[i];
+
+                int redValue = Color.red(pixel);
+                int blueValue = Color.blue(pixel);
+                int greenValue = Color.green(pixel);
+
+
+                JSONObject tmp = new JSONObject();
+                tmp.put("r", redValue);
+                tmp.put("g", greenValue);
+                tmp.put("b", blueValue);
+                tmp.put("a", 0);
+                pixels_array.put(tmp);
+            }
+
+            handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setDisplayTwo();
+                }
+            }, 2000);
+
+        } catch (
+                JSONException e)
+
+        {
+            // There should be no Exception
+        }
+
+    }
+
+    void setDisplayTwo() {
+        try {
+            JSONArray pixels_array = new JSONArray();
+
+            // BitmapFactory.Options options = new BitmapFactory.Options();
+            //options.outHeight = 32;
+            //options.outWidth = 32;
+            Bitmap tempBMP = BitmapFactory.decodeResource(
+                    getResources(),
+                    R.drawable.two);
+
+            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
+            tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
+            for (int i = 0; i < pixels.length; i++) {
+                int pixel = pixels[i];
+
+                int redValue = Color.red(pixel);
+                int blueValue = Color.blue(pixel);
+                int greenValue = Color.green(pixel);
+
+
+                JSONObject tmp = new JSONObject();
+                tmp.put("r", redValue);
+                tmp.put("g", greenValue);
+                tmp.put("b", blueValue);
+                tmp.put("a", 0);
+                pixels_array.put(tmp);
+            }
+
+            handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setDisplayOne();
+                }
+            }, 2000);
+        } catch (
+                JSONException e)
+
+        {
+            // There should be no Exception
+        }
+
+    }
+    void setDisplayOne() {
+        try {
+            JSONArray pixels_array = new JSONArray();
+
+            // BitmapFactory.Options options = new BitmapFactory.Options();
+            //options.outHeight = 32;
+            //options.outWidth = 32;
+            Bitmap tempBMP = BitmapFactory.decodeResource(
+                    getResources(),
+                    R.drawable.one);
+
+            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
+            tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
+            for (int i = 0; i < pixels.length; i++) {
+                int pixel = pixels[i];
+
+                int redValue = Color.red(pixel);
+                int blueValue = Color.blue(pixel);
+                int greenValue = Color.green(pixel);
+
+
+                JSONObject tmp = new JSONObject();
+                tmp.put("r", redValue);
+                tmp.put("g", greenValue);
+                tmp.put("b", blueValue);
+                tmp.put("a", 0);
+                pixels_array.put(tmp);
+            }
+
+            handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setDisplayGo();
+                }
+            }, 2000);
+        } catch (
+                JSONException e)
+
+        {
+            // There should be no Exception
+        }
+
+    }
+
+    void setDisplayGo() {
+        try {
+            JSONArray pixels_array = new JSONArray();
+
+            // BitmapFactory.Options options = new BitmapFactory.Options();
+            //options.outHeight = 32;
+            //options.outWidth = 32;
+            Bitmap tempBMP = BitmapFactory.decodeResource(
+                    getResources(),
+                    R.drawable.go);
+
+            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
+            tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
+            for (int i = 0; i < pixels.length; i++) {
+                int pixel = pixels[i];
+
+                int redValue = Color.red(pixel);
+                int blueValue = Color.blue(pixel);
+                int greenValue = Color.green(pixel);
+
+
+                JSONObject tmp = new JSONObject();
+                tmp.put("r", redValue);
+                tmp.put("g", greenValue);
+                tmp.put("b", blueValue);
+                tmp.put("a", 0);
+                pixels_array.put(tmp);
+            }
+
+            handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setDisplayPixels();
+                    countDownStart();
+                }
+            }, 2000);
+
         } catch (
                 JSONException e)
 
