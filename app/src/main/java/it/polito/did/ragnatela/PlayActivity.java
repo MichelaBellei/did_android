@@ -247,6 +247,20 @@ public class PlayActivity extends Activity {
                             if (seconds <= 20) {
                                 tvSecond.setTextColor(Color.RED);
                             }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        for (int j = 0; j < l_primo_t / 2; j++) {
+                                            mezza_bomba = setBombaRamo1(j);
+                                            handleNetworkRequest(NetworkThread.SET_PIXELS, mezza_bomba, 0, 0);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, 5000);
                         }
                         else{
                             game_over=true;
@@ -701,46 +715,6 @@ public class PlayActivity extends Activity {
     } */
 
 
-    /*
-    @OnClick(R.id.set_display_pixels)
-    void setDisplayPixels() {
-        try {
-            JSONArray pixels_array = new JSONArray();
-
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
-            Bitmap tempBMP = BitmapFactory.decodeResource(
-                    getResources(),
-                    R.drawable.cannone_blu_red_2);
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
-            int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
-            tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
-            for (int i = 0; i < pixels.length; i++) {
-                int pixel = pixels[i];
-
-                int redValue = Color.red(pixel);
-                int blueValue = Color.blue(pixel);
-                int greenValue = Color.green(pixel);
-
-
-                JSONObject tmp = new JSONObject();
-                tmp.put("r", redValue);
-                tmp.put("g", greenValue);
-                tmp.put("b", blueValue);
-                tmp.put("a", 0);
-                pixels_array.put(tmp);
-            }
-
-            handleNetworkRequest(NetworkThread.SET_DISPLAY_PIXELS, pixels_array, 0, 0);
-        } catch (
-                JSONException e)
-
-        {
-            // There should be no Exception
-        }
-
-    } */
 
    /* @OnClick(R.id.highlight_components_button)
     void highLightComponents() {
@@ -950,7 +924,7 @@ public class PlayActivity extends Activity {
         return mezzo_proiettile2;
     }
 
-    JSONArray setBomba(int j) {//muoviamo il proiettile in giù
+    JSONArray setBombaRamo1(int j) {//muoviamo la bomba in giù
         JSONObject tmp;
         JSONArray mezza_bomba = new JSONArray();
 
@@ -987,7 +961,7 @@ public class PlayActivity extends Activity {
         ragnatela[l_primo_t / 2 + j + 2][3] = 0;
 
         try {
-            for (int i = 0; i < 1072; i++) {
+            for (int i = 0; i < 52; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
