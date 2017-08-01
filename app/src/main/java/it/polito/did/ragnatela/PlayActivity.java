@@ -26,48 +26,21 @@ import butterknife.Unbinder;
 public class PlayActivity extends Activity {
 
     Unbinder unbinder;
-
-    private String host_url = "192.168.1.67";
-    private int host_port = 8080;
-
-
-   /* @BindView(R.id.set_display_pixels)
-    Button set_display_pixels;
-
-    @BindView(R.id.random_colors)
-    Button randomColors;
-
-    @BindView(R.id.move_backward_button)
-    Button moveBackwardButton;
-
-    @BindView(R.id.move_forward_button)
-    Button moveForwardButton;
-
-    @BindView(R.id.highlight_components_button)
-    Button changeColorButton;
-
-    @BindView(R.id.ramo1_button)
-    Button ramo1Button;
-
-    @BindViews({R.id.first_byte_ip, R.id.second_byte_ip, R.id.third_byte_ip, R.id.fourth_byte_ip})
-    List<EditText> ip_address_bytes;
-
-    @BindView(R.id.host_port)
-    EditText hostPort; */
-
-    private TextWatcher myIpTextWatcher;
     private JSONArray pixels_array;
 
-    private JSONArray primo_t, secondo_t, terzo_t, mezzo_proiettile, mezzo_proiettile2, mezza_bomba, restanti, quarto_t, quinto_t, primo_c, secondo_c, terzo_c;
+    private JSONArray  mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
 
     private Handler mNetworkHandler, mMainHandler;
 
     private NetworkThread mNetworkThread = null;
     private int l_primo_t = 51;
     private int l_secondo_t = 133;
+    private int l_terzo_t = 133;
+    private int l_quarto_t = 105;
+    private int l_quinto_t = 98;
 
     private int[][] ragnatela = new int[1072][4];// per ogni px abbiamo 4 colonne che identificano i valori di a, rgb
-    private int[][] display_pos1 = new int[1024][4];
+
     private TextView tvSecond;
     private Handler handler;
     private Runnable runnable;
@@ -82,13 +55,6 @@ public class PlayActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         unbinder = ButterKnife.bind(this);
-
-         /*  set_display_pixels.setEnabled(false);
-        randomColors.setEnabled(false);
-        moveBackwardButton.setEnabled(false);
-        moveForwardButton.setEnabled(false);
-        changeColorButton.setEnabled(false);
-        ramo1Button.setEnabled(false); */
 
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
         Typeface myTypeface = Typeface.createFromAsset(getAssets(),"fonts/wareagle.ttf");
@@ -109,18 +75,58 @@ public class PlayActivity extends Activity {
                 switch (posizioneAttuale) {
                     case 1:
                         imageCannone.setImageResource(R.drawable.cannone_up);
+                        try {
+                            for (int j = 0; j < (l_primo_t / 2); j++) {
+                                mezzo_proiettile = setProiettileRamo1(j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
+                        try {
+                            for (int j = 0; j < (l_secondo_t / 2); j++) {
+                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
+                        try {
+                            for (int j = 0; j < (l_terzo_t / 2); j++) {
+                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t+l_secondo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
+                        try {
+                            for (int j = 0; j < (l_quarto_t / 2); j++) {
+                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t+l_secondo_t+l_terzo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
+                        try {
+                            for (int j = 0; j < (l_quinto_t / 2); j++) {
+                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t+l_secondo_t+l_terzo_t+l_quarto_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
 
@@ -161,56 +167,42 @@ public class PlayActivity extends Activity {
                         break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
-
+                        try {
+                            for (int j = 0; j < (l_terzo_t / 2); j++) {
+                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t+l_secondo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
+                        try {
+                            for (int j = 0; j < (l_quarto_t / 2); j++) {
+                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t+l_secondo_t+l_terzo_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
+                        try {
+                            for (int j = 0; j < (l_quinto_t / 2); j++) {
+                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t+l_secondo_t+l_terzo_t+l_quarto_t,j);
+                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
 
 
             }
         });
-
-      /*  myIpTextWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                if (checkCorrectIp()) {
-                    /*moveBackwardButton.setEnabled(true);
-                    moveForwardButton.setEnabled(true);
-                    randomColors.setEnabled(true);
-                    set_display_pixels.setEnabled(true);
-                    changeColorButton.setEnabled(true);
-                    ramo1Button.setEnabled(true);
-                    Message msg = mNetworkHandler.obtainMessage();
-                    msg.what = NetworkThread.SET_SERVER_DATA;
-                    msg.obj = host_url;
-                    msg.arg1 = host_port;
-                    msg.sendToTarget();
-
-                    handleNetworkRequest(NetworkThread.SET_SERVER_DATA, host_url, host_port, 0);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        };
-
-        for (EditText ip_byte : ip_address_bytes) {
-            ip_byte.addTextChangedListener(myIpTextWatcher);
-        }
-
-        hostPort.addTextChangedListener(myIpTextWatcher); */
 
         pixels_array = preparePixelsArray();
 
@@ -225,7 +217,6 @@ public class PlayActivity extends Activity {
 
         try {
             initalizePixels();
-            spegniTutto();
             setDisplayThree();
         } catch (JSONException e) {
             //Non dovrebbe avere problemi
@@ -249,7 +240,7 @@ public class PlayActivity extends Activity {
                                 tvSecond.setTextColor(Color.RED);
                             }
 
-                            new Handler().postDelayed(new Runnable() {
+                           /* new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
@@ -261,7 +252,7 @@ public class PlayActivity extends Activity {
                                         e.printStackTrace();
                                     }
                                 }
-                            }, 5000);
+                            }, 5000);   bombe a ripetizione primo tirante*/
                         }
                         else{
                             game_over=true;
@@ -285,92 +276,29 @@ public class PlayActivity extends Activity {
 
         for (int i = 0; i < 1072; i++) {
             for (int j = 0; j < 4; j++) {
-                ragnatela[i][j] = 0;// li spegniamo tutti
+                ragnatela[i][j] = 0; // tutti spenti
             }
         }
-
-        for (int i = 0; i < 1024; i++) {
-            for (int j = 0; j < 3; j++) {
-                display_pos1[i][j] = 0; //spenti
-            }
-        }
-
-        JSONObject tmp;
-        primo_t = new JSONArray();
-        for (int i = 0; i < l_primo_t; i++) {
-            tmp = new JSONObject();
-            tmp.put("a", 0);
-            tmp.put("g", 0);
-            tmp.put("b", 0);
-            tmp.put("r", 0);
-            primo_t.put(tmp);
-        }
-
-        secondo_t = new JSONArray();
-        for (int i = 0; i < l_secondo_t; i++) {
-            tmp = new JSONObject();
-            tmp.put("a", 0);
-            tmp.put("g", 0);
-            tmp.put("b", 0);
-            tmp.put("r", 0);
-            secondo_t.put(tmp);
-        }
-
-        terzo_t = new JSONArray();
-        for (int i = 0; i < 1072 - l_primo_t - l_secondo_t; i++) {
-            tmp = new JSONObject();
-            tmp.put("a", 0);
-            tmp.put("g", 0);
-            tmp.put("b", 0);
-            tmp.put("r", 0);
-            terzo_t.put(tmp);
-        }
-    }
-
-    private void spegniTutto() {
         try {
             JSONArray jsonArray = new JSONArray();
 
-            for (int i = 0; i < primo_t.length(); i++)
-                jsonArray.put(primo_t.get(i));
-
-
-            for (int i = 0; i < secondo_t.length(); i++)
-                jsonArray.put(secondo_t.get(i));
-
-
-            for (int i = 0; i < terzo_t.length(); i++)
-                jsonArray.put(terzo_t.get(i));
+            for(int i=0; i<1072;i++){
+                jsonArray.put(ragnatela[i]);
+            }
 
             handleNetworkRequest(NetworkThread.SET_PIXELS, jsonArray, 0, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        /*try {
-            for (int i = 0; i < 26; i++) {
-                ((JSONObject) pixels_array.get(i)).put("r", 255);
-                ((JSONObject) pixels_array.get(i)).put("g", 0);
-                ((JSONObject) pixels_array.get(i)).put("b", 0);
-                wait(1000);
-                ((JSONObject) pixels_array.get(i)).put("r", 0);
-                ((JSONObject) pixels_array.get(i)).put("g", 255);
-                ((JSONObject) pixels_array.get(i)).put("b", 0);
-                handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
-            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
+
 
     void setDisplayPixels() {
         try {
             JSONArray pixels_array = new JSONArray();
 
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.cannone_blu_up);
@@ -412,11 +340,9 @@ public class PlayActivity extends Activity {
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
                 int pixel = pixels[i];
-
                 int redValue = Color.red(pixel);
                 int blueValue = Color.blue(pixel);
                 int greenValue = Color.green(pixel);
-
 
                 JSONObject tmp = new JSONObject();
                 tmp.put("r", redValue);
@@ -440,9 +366,6 @@ public class PlayActivity extends Activity {
         try {
             JSONArray pixels_array = new JSONArray();
 
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.three);
@@ -452,7 +375,6 @@ public class PlayActivity extends Activity {
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
                 int pixel = pixels[i];
-
                 int redValue = Color.red(pixel);
                 int blueValue = Color.blue(pixel);
                 int greenValue = Color.green(pixel);
@@ -487,9 +409,6 @@ public class PlayActivity extends Activity {
         try {
             JSONArray pixels_array = new JSONArray();
 
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.two);
@@ -499,7 +418,6 @@ public class PlayActivity extends Activity {
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
                 int pixel = pixels[i];
-
                 int redValue = Color.red(pixel);
                 int blueValue = Color.blue(pixel);
                 int greenValue = Color.green(pixel);
@@ -532,9 +450,6 @@ public class PlayActivity extends Activity {
         try {
             JSONArray pixels_array = new JSONArray();
 
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.one);
@@ -544,7 +459,6 @@ public class PlayActivity extends Activity {
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
                 int pixel = pixels[i];
-
                 int redValue = Color.red(pixel);
                 int blueValue = Color.blue(pixel);
                 int greenValue = Color.green(pixel);
@@ -578,9 +492,6 @@ public class PlayActivity extends Activity {
         try {
             JSONArray pixels_array = new JSONArray();
 
-            // BitmapFactory.Options options = new BitmapFactory.Options();
-            //options.outHeight = 32;
-            //options.outWidth = 32;
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.go);
@@ -590,7 +501,6 @@ public class PlayActivity extends Activity {
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
                 int pixel = pixels[i];
-
                 int redValue = Color.red(pixel);
                 int blueValue = Color.blue(pixel);
                 int greenValue = Color.green(pixel);
@@ -628,76 +538,6 @@ public class PlayActivity extends Activity {
         mNetworkHandler = mNetworkThread.getNetworkHandler();
     }
 
-    /*private boolean checkCorrectIp() {
-        StringBuilder sb = new StringBuilder();
-        int port;
-
-        if (hostPort.getText().length() == 0)
-            return false;
-
-        for (EditText editText : ip_address_bytes) {
-            sb.append(editText.getText().toString());
-            sb.append(".");
-        }
-        //cancello l'ultimo "."
-        sb.deleteCharAt(sb.length() - 1);
-
-        port = Integer.parseInt(hostPort.getText().toString());
-        if (validIP(sb.toString()) && port >= 0 & port <= 65535) {
-            host_url = sb.toString();
-            host_port = port;
-            return true;
-        } else
-            return false;
-    } */
-
-    //from http://stackoverflow.com/questions/4581877/validating-ipv4-string-in-java
-   /* public static boolean validIP(String ip) {
-        try {
-            if (ip == null || ip.isEmpty()) {
-                return false;
-            }
-
-            String[] parts = ip.split("\\.");
-            if (parts.length != 4) {
-                return false;
-            }
-
-            for (String s : parts) {
-                int i = Integer.parseInt(s);
-                if ((i < 0) || (i > 255)) {
-                    return false;
-                }
-            }
-            if (ip.endsWith(".")) {
-                return false;
-            }
-
-            return true;
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
-        if (mNetworkThread != null && mNetworkHandler != null) {
-            mNetworkHandler.removeMessages(mNetworkThread.SET_PIXELS);
-            mNetworkHandler.removeMessages(mNetworkThread.SET_DISPLAY_PIXELS);
-            mNetworkHandler.removeMessages(mNetworkThread.SET_SERVER_DATA);
-            mNetworkThread.quit();
-            try {
-                mNetworkThread.join(100);
-            } catch (InterruptedException ie) {
-                throw new RuntimeException(ie);
-            } finally {
-                mNetworkThread = null;
-                mNetworkHandler = null;
-            }
-        }
-    } */
 
     /*
     @OnClick(R.id.random_colors)
@@ -828,37 +668,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile = new JSONArray();
 
-        ragnatela[j][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[j][0] = 0;// coloriamo i primi 3 led blu
         ragnatela[j][1] = 0;
         ragnatela[j][2] = 0;
         ragnatela[j][3] = 0;
 
-        ragnatela[j + 1][0] = 100;// coloriamo i primi 3 led verdi
-        ragnatela[j + 1][1] = 0;
-        ragnatela[j + 1][2] = 255;
-        ragnatela[j + 1][3] = 0;
+        ragnatela[j + 1][0] = 100;
+        ragnatela[j + 1][1] = 128;
+        ragnatela[j + 1][2] = 195;
+        ragnatela[j + 1][3] = 238;
 
-        ragnatela[j + 2][0] = 255;// coloriamo i primi 3 led verdi
-        ragnatela[j + 2][1] = 0;
-        ragnatela[j + 2][2] = 255;
-        ragnatela[j + 2][3] = 0;
+        ragnatela[j + 2][0] = 255;
+        ragnatela[j + 2][1] = 128;
+        ragnatela[j + 2][2] = 195;
+        ragnatela[j + 2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[l_primo_t - j][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[l_primo_t - j][0] = 0;// coloriamo i primi 3 led blu
         ragnatela[l_primo_t - j][1] = 0;
         ragnatela[l_primo_t - j][2] = 0;
         ragnatela[l_primo_t - j][3] = 0;
 
-        ragnatela[l_primo_t - j - 1][0] = 100;// coloriamo i primi 3 led verdi
-        ragnatela[l_primo_t - j - 1][1] = 0;
-        ragnatela[l_primo_t - j - 1][2] = 255;
-        ragnatela[l_primo_t - j - 1][3] = 0;
+        ragnatela[l_primo_t - j - 1][0] = 100;
+        ragnatela[l_primo_t - j - 1][1] = 128;
+        ragnatela[l_primo_t - j - 1][2] = 195;
+        ragnatela[l_primo_t - j - 1][3] = 238;
 
-        ragnatela[l_primo_t - j - 2][0] = 255;// coloriamo i primi 3 led verdi
-        ragnatela[l_primo_t - j - 2][1] = 0;
-        ragnatela[l_primo_t - j - 2][2] = 255;
-        ragnatela[l_primo_t - j - 2][3] = 0;
+        ragnatela[l_primo_t - j - 2][0] = 255;
+        ragnatela[l_primo_t - j - 2][1] = 128;
+        ragnatela[l_primo_t - j - 2][2] = 195;
+        ragnatela[l_primo_t - j - 2][3] = 238;
 
         try {
             for (int i = 0; i < 52; i++) {
@@ -880,37 +720,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile2 = new JSONArray();
 
-        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
         ragnatela[j+count][1] = 0;
         ragnatela[j+count][2] = 0;
         ragnatela[j+count][3] = 0;
 
-        ragnatela[j +count+ 1][0] = 100;// coloriamo i primi 3 led verdi
-        ragnatela[j +count+ 1][1] = 0;
-        ragnatela[j +count+ 1][2] = 255;
-        ragnatela[j +count+ 1][3] = 0;
+        ragnatela[j +count+ 1][0] = 100;
+        ragnatela[j +count+ 1][1] = 128;
+        ragnatela[j +count+ 1][2] = 195;
+        ragnatela[j +count+ 1][3] = 238;
 
-        ragnatela[j + count+2][0] = 255;// coloriamo i primi 3 led verdi
-        ragnatela[j + count+2][1] = 0;
-        ragnatela[j + count+2][2] = 255;
-        ragnatela[j + count+2][3] = 0;
+        ragnatela[j + count+2][0] = 255;
+        ragnatela[j + count+2][1] = 128;
+        ragnatela[j + count+2][2] = 195;
+        ragnatela[j + count+2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[j+l_secondo_t - count+1][0] = 0;// coloriamo i primi 3 led verdi
+        ragnatela[j+l_secondo_t - count+1][0] = 0;// coloriamo i primi 3 led blu
         ragnatela[j+l_secondo_t - count+1][1] = 0;
         ragnatela[j+l_secondo_t - count+1][2] = 0;
         ragnatela[j+l_secondo_t - count+1][3] = 0;
 
-        ragnatela[j+l_secondo_t - count ][0] = 100;// coloriamo i primi 3 led verdi
-        ragnatela[j+l_secondo_t - count ][1] = 0;
-        ragnatela[j+l_secondo_t - count ][2] = 255;
-        ragnatela[j+l_secondo_t - count ][3] = 0;
+        ragnatela[j+l_secondo_t - count ][0] = 100;
+        ragnatela[j+l_secondo_t - count ][1] = 128;
+        ragnatela[j+l_secondo_t - count ][2] = 195;
+        ragnatela[j+l_secondo_t - count ][3] = 238;
 
-        ragnatela[j+l_secondo_t - count - 1][0] = 255;// coloriamo i primi 3 led verdi
-        ragnatela[j+l_secondo_t - count - 1][1] = 0;
-        ragnatela[j+l_secondo_t - count - 1][2] = 255;
-        ragnatela[j+l_secondo_t - count - 1][3] = 0;
+        ragnatela[j+l_secondo_t - count - 1][0] = 255;
+        ragnatela[j+l_secondo_t - count - 1][1] = 128;
+        ragnatela[j+l_secondo_t - count - 1][2] = 195;
+        ragnatela[j+l_secondo_t - count - 1][3] = 238;
 
         try {
             for (int i = 0; i < 186; i++) {
@@ -926,6 +766,162 @@ public class PlayActivity extends Activity {
             // No errors expected here
         }
         return mezzo_proiettile2;
+    }
+
+    JSONArray setProiettileRamo3(int j, int count) {//muoviamo il proiettile in su
+        JSONObject tmp;
+        JSONArray mezzo_proiettile3 = new JSONArray();
+
+        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+count][1] = 0;
+        ragnatela[j+count][2] = 0;
+        ragnatela[j+count][3] = 0;
+
+        ragnatela[j +count+ 1][0] = 100;
+        ragnatela[j +count+ 1][1] = 128;
+        ragnatela[j +count+ 1][2] = 195;
+        ragnatela[j +count+ 1][3] = 238;
+
+        ragnatela[j + count+2][0] = 255;
+        ragnatela[j + count+2][1] = 128;
+        ragnatela[j + count+2][2] = 195;
+        ragnatela[j + count+2][3] = 238;
+
+        // anche gli ultimi si accendono
+
+        ragnatela[j+l_terzo_t - count+1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+l_terzo_t - count+1][1] = 0;
+        ragnatela[j+l_terzo_t - count+1][2] = 0;
+        ragnatela[j+l_terzo_t - count+1][3] = 0;
+
+        ragnatela[j+l_terzo_t - count ][0] = 100;
+        ragnatela[j+l_terzo_t - count ][1] = 128;
+        ragnatela[j+l_terzo_t - count ][2] = 195;
+        ragnatela[j+l_terzo_t - count ][3] = 238;
+
+        ragnatela[j+l_terzo_t - count - 1][0] = 255;
+        ragnatela[j+l_terzo_t - count - 1][1] = 128;
+        ragnatela[j+l_terzo_t - count - 1][2] = 195;
+        ragnatela[j+l_terzo_t - count - 1][3] = 238;
+
+        try {
+            for (int i = 0; i < 317; i++) {
+                tmp = new JSONObject();
+                tmp.put("a", ragnatela[i][0]);
+                tmp.put("r", ragnatela[i][1]);
+                tmp.put("g", ragnatela[i][2]);
+                tmp.put("b", ragnatela[i][3]);
+
+                mezzo_proiettile3.put(tmp);
+            }
+        } catch (JSONException exception) {
+            // No errors expected here
+        }
+        return mezzo_proiettile3;
+    }
+
+    JSONArray setProiettileRamo4(int j, int count) {//muoviamo il proiettile in su
+        JSONObject tmp;
+        JSONArray mezzo_proiettile4 = new JSONArray();
+
+        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+count][1] = 0;
+        ragnatela[j+count][2] = 0;
+        ragnatela[j+count][3] = 0;
+
+        ragnatela[j +count+ 1][0] = 100;
+        ragnatela[j +count+ 1][1] = 128;
+        ragnatela[j +count+ 1][2] = 195;
+        ragnatela[j +count+ 1][3] = 238;
+
+        ragnatela[j + count+2][0] = 255;
+        ragnatela[j + count+2][1] = 128;
+        ragnatela[j + count+2][2] = 195;
+        ragnatela[j + count+2][3] = 238;
+
+        // anche gli ultimi si accendono
+
+        ragnatela[j+l_quarto_t - count+1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+l_quarto_t - count+1][1] = 0;
+        ragnatela[j+l_quarto_t - count+1][2] = 0;
+        ragnatela[j+l_quarto_t - count+1][3] = 0;
+
+        ragnatela[j+l_quarto_t - count ][0] = 100;
+        ragnatela[j+l_quarto_t - count ][1] = 128;
+        ragnatela[j+l_quarto_t - count ][2] = 195;
+        ragnatela[j+l_quarto_t - count ][3] = 238;
+
+        ragnatela[j+l_quarto_t - count - 1][0] = 255;
+        ragnatela[j+l_quarto_t - count - 1][1] = 128;
+        ragnatela[j+l_quarto_t - count - 1][2] = 195;
+        ragnatela[j+l_quarto_t - count - 1][3] = 238;
+
+        try {
+            for (int i = 0; i < 423; i++) {
+                tmp = new JSONObject();
+                tmp.put("a", ragnatela[i][0]);
+                tmp.put("r", ragnatela[i][1]);
+                tmp.put("g", ragnatela[i][2]);
+                tmp.put("b", ragnatela[i][3]);
+
+                mezzo_proiettile4.put(tmp);
+            }
+        } catch (JSONException exception) {
+            // No errors expected here
+        }
+        return mezzo_proiettile4;
+    }
+
+    JSONArray setProiettileRamo5(int j, int count) {//muoviamo il proiettile in su
+        JSONObject tmp;
+        JSONArray mezzo_proiettile5 = new JSONArray();
+
+        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+count][1] = 0;
+        ragnatela[j+count][2] = 0;
+        ragnatela[j+count][3] = 0;
+
+        ragnatela[j +count+ 1][0] = 100;
+        ragnatela[j +count+ 1][1] = 128;
+        ragnatela[j +count+ 1][2] = 195;
+        ragnatela[j +count+ 1][3] = 238;
+
+        ragnatela[j + count+2][0] = 255;
+        ragnatela[j + count+2][1] = 128;
+        ragnatela[j + count+2][2] = 195;
+        ragnatela[j + count+2][3] = 238;
+
+        // anche gli ultimi si accendono
+
+        ragnatela[j+l_quinto_t - count+1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j+l_quinto_t - count+1][1] = 0;
+        ragnatela[j+l_quinto_t - count+1][2] = 0;
+        ragnatela[j+l_quinto_t - count+1][3] = 0;
+
+        ragnatela[j+l_quinto_t - count ][0] = 100;
+        ragnatela[j+l_quinto_t - count ][1] = 128;
+        ragnatela[j+l_quinto_t - count ][2] = 195;
+        ragnatela[j+l_quinto_t - count ][3] = 238;
+
+        ragnatela[j+l_quinto_t - count - 1][0] = 255;
+        ragnatela[j+l_quinto_t - count - 1][1] = 128;
+        ragnatela[j+l_quinto_t - count - 1][2] = 195;
+        ragnatela[j+l_quinto_t - count - 1][3] = 238;
+
+        try {
+            for (int i = 0; i < 521; i++) {
+                tmp = new JSONObject();
+                tmp.put("a", ragnatela[i][0]);
+                tmp.put("r", ragnatela[i][1]);
+                tmp.put("g", ragnatela[i][2]);
+                tmp.put("b", ragnatela[i][3]);
+
+                mezzo_proiettile5.put(tmp);
+            }
+        } catch (JSONException exception) {
+            // No errors expected here
+        }
+        return mezzo_proiettile5;
     }
 
     JSONArray setBombaRamo1(int j) {//muoviamo la bomba in giù
