@@ -1,6 +1,7 @@
 package it.polito.did.ragnatela;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -265,7 +266,10 @@ public class PlayActivity extends Activity {
                         else{
                             game_over=true;
                             setDisplayPixels();
-                            //chiamare activity classifica e game over
+                            Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
+                            startActivity(activity_gameover);
+                            handler.removeCallbacks(runnable);
+                            //chiamata activity classifica e game over
                         }
 
                 } catch (Exception e) {
