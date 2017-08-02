@@ -27,7 +27,7 @@ public class PlayActivity extends Activity {
     Unbinder unbinder;
     private JSONArray pixels_array;
 
-    private JSONArray  mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
+    private JSONArray mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
 
     private Handler mNetworkHandler, mMainHandler;
 
@@ -47,7 +47,18 @@ public class PlayActivity extends Activity {
     private Button buttonRight, buttonLeft;
     private ImageView imageCannone;
     private int posizioneAttuale = 1;
-    private boolean game_over=false;
+    private boolean game_over = false;
+    private Runnable aggiornaRagnatela = new Runnable() {
+        @Override
+        public void run() {
+            for (int j = 0; j < (l_secondo_t / 2); j++) {
+                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
+                //aggiorno i vari proiettili/bombe
+            }
+            handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
+            buttonRight.postDelayed(aggiornaRagnatela, 30);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +67,21 @@ public class PlayActivity extends Activity {
         unbinder = ButterKnife.bind(this);
 
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
-        Typeface myTypeface = Typeface.createFromAsset(getAssets(),"fonts/wareagle.ttf");
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
         tvSecond.setTypeface(myTypeface);
 
         imageCannone = (ImageView) findViewById(R.id.imageCannone);
         buttonLeft = (Button) findViewById(R.id.leftButton);
         buttonRight = (Button) findViewById(R.id.rightButton);
-
+//thread che aggiorna le posizioni dei proiettili e delle bombe
+        buttonRight.postDelayed(aggiornaRagnatela, 30);
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // ad ogni click vedo la posizione e agg proiettile nel ramo
                 posizioneAttuale++;
-                if(posizioneAttuale==6){
-                    posizioneAttuale=1;
+                if (posizioneAttuale == 6) {
+                    posizioneAttuale = 1;
                 }
                 setDisplayPixels();
                 switch (posizioneAttuale) {
@@ -87,7 +100,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
                         try {
                             for (int j = 0; j < (l_secondo_t / 2); j++) {
-                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t,j);
+                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
                             }
                         } catch (Exception e) {
@@ -98,7 +111,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
                         try {
                             for (int j = 0; j < (l_terzo_t / 2); j++) {
-                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t+l_secondo_t,j);
+                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t + l_secondo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
                             }
                         } catch (Exception e) {
@@ -109,7 +122,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
                         try {
                             for (int j = 0; j < (l_quarto_t / 2); j++) {
-                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t+l_secondo_t+l_terzo_t,j);
+                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t + l_secondo_t + l_terzo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
                             }
                         } catch (Exception e) {
@@ -120,7 +133,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
                         try {
                             for (int j = 0; j < (l_quinto_t / 2); j++) {
-                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t+l_secondo_t+l_terzo_t+l_quarto_t,j);
+                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t + l_secondo_t + l_terzo_t + l_quarto_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
                             }
                         } catch (Exception e) {
@@ -137,11 +150,11 @@ public class PlayActivity extends Activity {
             @Override
             public void onClick(View v) {
                 posizioneAttuale--;
-                if(posizioneAttuale==0){
-                    posizioneAttuale=5;
+                if (posizioneAttuale == 0) {
+                    posizioneAttuale = 5;
                 }
                 setDisplayPixels();
-                switch (posizioneAttuale){
+                switch (posizioneAttuale) {
                     case 1:
                         imageCannone.setImageResource(R.drawable.cannone_up);
                         try {
@@ -157,7 +170,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
                         try {
                             for (int j = 0; j < (l_secondo_t / 2); j++) {
-                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t,j);
+                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
                             }
                         } catch (Exception e) {
@@ -168,7 +181,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
                         try {
                             for (int j = 0; j < (l_terzo_t / 2); j++) {
-                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t+l_secondo_t,j);
+                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t + l_secondo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
                             }
                         } catch (Exception e) {
@@ -179,7 +192,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
                         try {
                             for (int j = 0; j < (l_quarto_t / 2); j++) {
-                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t+l_secondo_t+l_terzo_t,j);
+                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t + l_secondo_t + l_terzo_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
                             }
                         } catch (Exception e) {
@@ -190,7 +203,7 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
                         try {
                             for (int j = 0; j < (l_quinto_t / 2); j++) {
-                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t+l_secondo_t+l_terzo_t+l_quarto_t,j);
+                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t + l_secondo_t + l_terzo_t + l_quarto_t, j);
                                 handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
                             }
                         } catch (Exception e) {
@@ -232,12 +245,12 @@ public class PlayActivity extends Activity {
                 handler.postDelayed(this, 1000);
                 try {
 
-                        if(seconds>0) {
-                            seconds = seconds - 1;
-                            tvSecond.setText("" + String.format("%02d", seconds));
-                            if (seconds <= 20) {
-                                tvSecond.setTextColor(Color.RED);
-                            }
+                    if (seconds > 0) {
+                        seconds = seconds - 1;
+                        tvSecond.setText("" + String.format("%02d", seconds));
+                        if (seconds <= 20) {
+                            tvSecond.setTextColor(Color.RED);
+                        }
 
                            /* new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -252,15 +265,14 @@ public class PlayActivity extends Activity {
                                     }
                                 }
                             }, 5000);   bombe a ripetizione primo tirante*/
-                        }
-                        else{
-                            game_over=true;
-                            setDisplayPixels();
-                            Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
-                            startActivity(activity_gameover);
-                            handler.removeCallbacks(runnable);
-                            //chiamata activity classifica e game over
-                        }
+                    } else {
+                        game_over = true;
+                        setDisplayPixels();
+                        Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
+                        startActivity(activity_gameover);
+                        handler.removeCallbacks(runnable);
+                        //chiamata activity classifica e game over
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -281,7 +293,7 @@ public class PlayActivity extends Activity {
         try {
             JSONArray jsonArray = new JSONArray();
 
-            for(int i=0; i<1072;i++){
+            for (int i = 0; i < 1072; i++) {
                 jsonArray.put(ragnatela[i]);
             }
 
@@ -301,14 +313,14 @@ public class PlayActivity extends Activity {
             Bitmap tempBMP = BitmapFactory.decodeResource(
                     getResources(),
                     R.drawable.cannone_blu_up);
-            switch(posizioneAttuale){
+            switch (posizioneAttuale) {
                 case 1:
-                     tempBMP = BitmapFactory.decodeResource(
-                        getResources(),
-                        R.drawable.cannone_blu_up);
+                    tempBMP = BitmapFactory.decodeResource(
+                            getResources(),
+                            R.drawable.cannone_blu_up);
                     break;
                 case 2:
-                     tempBMP = BitmapFactory.decodeResource(
+                    tempBMP = BitmapFactory.decodeResource(
                             getResources(),
                             R.drawable.cannone_dx_alto);
                     break;
@@ -329,12 +341,12 @@ public class PlayActivity extends Activity {
                     break;
             }
 
-            if(game_over==true){
+            if (game_over == true) {
                 tempBMP = BitmapFactory.decodeResource(
                         getResources(),
                         R.drawable.gameover);
             }
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
@@ -369,7 +381,7 @@ public class PlayActivity extends Activity {
                     getResources(),
                     R.drawable.three);
 
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
@@ -413,7 +425,7 @@ public class PlayActivity extends Activity {
                     getResources(),
                     R.drawable.two);
 
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
@@ -447,6 +459,7 @@ public class PlayActivity extends Activity {
         }
 
     }
+
     void setDisplayOne() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -455,7 +468,7 @@ public class PlayActivity extends Activity {
                     getResources(),
                     R.drawable.one);
 
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
@@ -498,7 +511,7 @@ public class PlayActivity extends Activity {
                     getResources(),
                     R.drawable.go);
 
-            tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
+            tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
             tempBMP.getPixels(pixels, 0, tempBMP.getWidth(), 0, 0, tempBMP.getWidth(), tempBMP.getHeight());
             for (int i = 0; i < pixels.length; i++) {
@@ -723,37 +736,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile2 = new JSONArray();
 
-        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+count][1] = 0;
-        ragnatela[j+count][2] = 0;
-        ragnatela[j+count][3] = 0;
+        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + count][1] = 0;
+        ragnatela[j + count][2] = 0;
+        ragnatela[j + count][3] = 0;
 
-        ragnatela[j +count+ 1][0] = 100;
-        ragnatela[j +count+ 1][1] = 128;
-        ragnatela[j +count+ 1][2] = 195;
-        ragnatela[j +count+ 1][3] = 238;
+        ragnatela[j + count + 1][0] = 100;
+        ragnatela[j + count + 1][1] = 128;
+        ragnatela[j + count + 1][2] = 195;
+        ragnatela[j + count + 1][3] = 238;
 
-        ragnatela[j + count+2][0] = 255;
-        ragnatela[j + count+2][1] = 128;
-        ragnatela[j + count+2][2] = 195;
-        ragnatela[j + count+2][3] = 238;
+        ragnatela[j + count + 2][0] = 255;
+        ragnatela[j + count + 2][1] = 128;
+        ragnatela[j + count + 2][2] = 195;
+        ragnatela[j + count + 2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[j+l_secondo_t - count+1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+l_secondo_t - count+1][1] = 0;
-        ragnatela[j+l_secondo_t - count+1][2] = 0;
-        ragnatela[j+l_secondo_t - count+1][3] = 0;
+        ragnatela[j + l_secondo_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + l_secondo_t - count + 1][1] = 0;
+        ragnatela[j + l_secondo_t - count + 1][2] = 0;
+        ragnatela[j + l_secondo_t - count + 1][3] = 0;
 
-        ragnatela[j+l_secondo_t - count ][0] = 100;
-        ragnatela[j+l_secondo_t - count ][1] = 128;
-        ragnatela[j+l_secondo_t - count ][2] = 195;
-        ragnatela[j+l_secondo_t - count ][3] = 238;
+        ragnatela[j + l_secondo_t - count][0] = 100;
+        ragnatela[j + l_secondo_t - count][1] = 128;
+        ragnatela[j + l_secondo_t - count][2] = 195;
+        ragnatela[j + l_secondo_t - count][3] = 238;
 
-        ragnatela[j+l_secondo_t - count - 1][0] = 255;
-        ragnatela[j+l_secondo_t - count - 1][1] = 128;
-        ragnatela[j+l_secondo_t - count - 1][2] = 195;
-        ragnatela[j+l_secondo_t - count - 1][3] = 238;
+        ragnatela[j + l_secondo_t - count - 1][0] = 255;
+        ragnatela[j + l_secondo_t - count - 1][1] = 128;
+        ragnatela[j + l_secondo_t - count - 1][2] = 195;
+        ragnatela[j + l_secondo_t - count - 1][3] = 238;
 
         try {
             for (int i = 0; i < 186; i++) {
@@ -775,37 +788,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile3 = new JSONArray();
 
-        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+count][1] = 0;
-        ragnatela[j+count][2] = 0;
-        ragnatela[j+count][3] = 0;
+        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + count][1] = 0;
+        ragnatela[j + count][2] = 0;
+        ragnatela[j + count][3] = 0;
 
-        ragnatela[j +count+ 1][0] = 100;
-        ragnatela[j +count+ 1][1] = 128;
-        ragnatela[j +count+ 1][2] = 195;
-        ragnatela[j +count+ 1][3] = 238;
+        ragnatela[j + count + 1][0] = 100;
+        ragnatela[j + count + 1][1] = 128;
+        ragnatela[j + count + 1][2] = 195;
+        ragnatela[j + count + 1][3] = 238;
 
-        ragnatela[j + count+2][0] = 255;
-        ragnatela[j + count+2][1] = 128;
-        ragnatela[j + count+2][2] = 195;
-        ragnatela[j + count+2][3] = 238;
+        ragnatela[j + count + 2][0] = 255;
+        ragnatela[j + count + 2][1] = 128;
+        ragnatela[j + count + 2][2] = 195;
+        ragnatela[j + count + 2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[j+l_terzo_t - count+1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+l_terzo_t - count+1][1] = 0;
-        ragnatela[j+l_terzo_t - count+1][2] = 0;
-        ragnatela[j+l_terzo_t - count+1][3] = 0;
+        ragnatela[j + l_terzo_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + l_terzo_t - count + 1][1] = 0;
+        ragnatela[j + l_terzo_t - count + 1][2] = 0;
+        ragnatela[j + l_terzo_t - count + 1][3] = 0;
 
-        ragnatela[j+l_terzo_t - count ][0] = 100;
-        ragnatela[j+l_terzo_t - count ][1] = 128;
-        ragnatela[j+l_terzo_t - count ][2] = 195;
-        ragnatela[j+l_terzo_t - count ][3] = 238;
+        ragnatela[j + l_terzo_t - count][0] = 100;
+        ragnatela[j + l_terzo_t - count][1] = 128;
+        ragnatela[j + l_terzo_t - count][2] = 195;
+        ragnatela[j + l_terzo_t - count][3] = 238;
 
-        ragnatela[j+l_terzo_t - count - 1][0] = 255;
-        ragnatela[j+l_terzo_t - count - 1][1] = 128;
-        ragnatela[j+l_terzo_t - count - 1][2] = 195;
-        ragnatela[j+l_terzo_t - count - 1][3] = 238;
+        ragnatela[j + l_terzo_t - count - 1][0] = 255;
+        ragnatela[j + l_terzo_t - count - 1][1] = 128;
+        ragnatela[j + l_terzo_t - count - 1][2] = 195;
+        ragnatela[j + l_terzo_t - count - 1][3] = 238;
 
         try {
             for (int i = 0; i < 318; i++) {
@@ -827,37 +840,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile4 = new JSONArray();
 
-        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+count][1] = 0;
-        ragnatela[j+count][2] = 0;
-        ragnatela[j+count][3] = 0;
+        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + count][1] = 0;
+        ragnatela[j + count][2] = 0;
+        ragnatela[j + count][3] = 0;
 
-        ragnatela[j +count+ 1][0] = 100;
-        ragnatela[j +count+ 1][1] = 128;
-        ragnatela[j +count+ 1][2] = 195;
-        ragnatela[j +count+ 1][3] = 238;
+        ragnatela[j + count + 1][0] = 100;
+        ragnatela[j + count + 1][1] = 128;
+        ragnatela[j + count + 1][2] = 195;
+        ragnatela[j + count + 1][3] = 238;
 
-        ragnatela[j + count+2][0] = 255;
-        ragnatela[j + count+2][1] = 128;
-        ragnatela[j + count+2][2] = 195;
-        ragnatela[j + count+2][3] = 238;
+        ragnatela[j + count + 2][0] = 255;
+        ragnatela[j + count + 2][1] = 128;
+        ragnatela[j + count + 2][2] = 195;
+        ragnatela[j + count + 2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[j+l_quarto_t - count+1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+l_quarto_t - count+1][1] = 0;
-        ragnatela[j+l_quarto_t - count+1][2] = 0;
-        ragnatela[j+l_quarto_t - count+1][3] = 0;
+        ragnatela[j + l_quarto_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + l_quarto_t - count + 1][1] = 0;
+        ragnatela[j + l_quarto_t - count + 1][2] = 0;
+        ragnatela[j + l_quarto_t - count + 1][3] = 0;
 
-        ragnatela[j+l_quarto_t - count ][0] = 100;
-        ragnatela[j+l_quarto_t - count ][1] = 128;
-        ragnatela[j+l_quarto_t - count ][2] = 195;
-        ragnatela[j+l_quarto_t - count ][3] = 238;
+        ragnatela[j + l_quarto_t - count][0] = 100;
+        ragnatela[j + l_quarto_t - count][1] = 128;
+        ragnatela[j + l_quarto_t - count][2] = 195;
+        ragnatela[j + l_quarto_t - count][3] = 238;
 
-        ragnatela[j+l_quarto_t - count - 1][0] = 255;
-        ragnatela[j+l_quarto_t - count - 1][1] = 128;
-        ragnatela[j+l_quarto_t - count - 1][2] = 195;
-        ragnatela[j+l_quarto_t - count - 1][3] = 238;
+        ragnatela[j + l_quarto_t - count - 1][0] = 255;
+        ragnatela[j + l_quarto_t - count - 1][1] = 128;
+        ragnatela[j + l_quarto_t - count - 1][2] = 195;
+        ragnatela[j + l_quarto_t - count - 1][3] = 238;
 
         try {
             for (int i = 0; i < 424; i++) {
@@ -879,37 +892,37 @@ public class PlayActivity extends Activity {
         JSONObject tmp;
         JSONArray mezzo_proiettile5 = new JSONArray();
 
-        ragnatela[j+count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+count][1] = 0;
-        ragnatela[j+count][2] = 0;
-        ragnatela[j+count][3] = 0;
+        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + count][1] = 0;
+        ragnatela[j + count][2] = 0;
+        ragnatela[j + count][3] = 0;
 
-        ragnatela[j +count+ 1][0] = 100;
-        ragnatela[j +count+ 1][1] = 128;
-        ragnatela[j +count+ 1][2] = 195;
-        ragnatela[j +count+ 1][3] = 238;
+        ragnatela[j + count + 1][0] = 100;
+        ragnatela[j + count + 1][1] = 128;
+        ragnatela[j + count + 1][2] = 195;
+        ragnatela[j + count + 1][3] = 238;
 
-        ragnatela[j + count+2][0] = 255;
-        ragnatela[j + count+2][1] = 128;
-        ragnatela[j + count+2][2] = 195;
-        ragnatela[j + count+2][3] = 238;
+        ragnatela[j + count + 2][0] = 255;
+        ragnatela[j + count + 2][1] = 128;
+        ragnatela[j + count + 2][2] = 195;
+        ragnatela[j + count + 2][3] = 238;
 
         // anche gli ultimi si accendono
 
-        ragnatela[j+l_quinto_t - count+1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j+l_quinto_t - count+1][1] = 0;
-        ragnatela[j+l_quinto_t - count+1][2] = 0;
-        ragnatela[j+l_quinto_t - count+1][3] = 0;
+        ragnatela[j + l_quinto_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
+        ragnatela[j + l_quinto_t - count + 1][1] = 0;
+        ragnatela[j + l_quinto_t - count + 1][2] = 0;
+        ragnatela[j + l_quinto_t - count + 1][3] = 0;
 
-        ragnatela[j+l_quinto_t - count ][0] = 100;
-        ragnatela[j+l_quinto_t - count ][1] = 128;
-        ragnatela[j+l_quinto_t - count ][2] = 195;
-        ragnatela[j+l_quinto_t - count ][3] = 238;
+        ragnatela[j + l_quinto_t - count][0] = 100;
+        ragnatela[j + l_quinto_t - count][1] = 128;
+        ragnatela[j + l_quinto_t - count][2] = 195;
+        ragnatela[j + l_quinto_t - count][3] = 238;
 
-        ragnatela[j+l_quinto_t - count - 1][0] = 255;
-        ragnatela[j+l_quinto_t - count - 1][1] = 128;
-        ragnatela[j+l_quinto_t - count - 1][2] = 195;
-        ragnatela[j+l_quinto_t - count - 1][3] = 238;
+        ragnatela[j + l_quinto_t - count - 1][0] = 255;
+        ragnatela[j + l_quinto_t - count - 1][1] = 128;
+        ragnatela[j + l_quinto_t - count - 1][2] = 195;
+        ragnatela[j + l_quinto_t - count - 1][3] = 238;
 
         try {
             for (int i = 0; i < 522; i++) {
