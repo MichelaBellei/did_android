@@ -10,18 +10,49 @@
     android:weightSum="1">
 
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_weight="0.05"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </LinearLayout>
+
+        <Button
         android:id="@+id/button_start"
         android:layout_gravity="center_horizontal"
-        android:layout_width="500dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="230dp"
+        android:layout_weight="0.9"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:background="@drawable/button_press_start"
-        android:layout_weight="0.04" />
+         />
 
-
+        <LinearLayout
+            android:layout_weight="0.05"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1">
+    </LinearLayout>
+
+</LinearLayout>
 
 
 

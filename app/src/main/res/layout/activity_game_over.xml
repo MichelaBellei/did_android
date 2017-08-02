@@ -2,25 +2,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/background_gameover">
+    android:background="@drawable/background_gameover"
+    android:orientation="horizontal">
 
-    
-    <Button
-        android:id="@+id/play_again_button"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:background="@drawable/play_again"
-        android:layout_marginTop="190dp"
-        android:layout_marginLeft="250dp"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"></LinearLayout>
 
-    <Button
-        android:id="@+id/exit_button"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:background="@drawable/exit"
-        android:layout_marginLeft="400dp"
-        android:layout_marginTop="-50dp"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.45"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.15"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/play_again_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@drawable/play_again" />
+
+            <Button
+                android:id="@+id/exit_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@drawable/exit" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"></LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"></LinearLayout>
 </LinearLayout>
 
