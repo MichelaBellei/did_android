@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -311,29 +310,29 @@ public class PlayActivity extends Activity {
                 case 2:
                      tempBMP = BitmapFactory.decodeResource(
                             getResources(),
-                            R.drawable.diag_dx_up);
+                            R.drawable.cannone_dx_alto);
                     break;
                 case 3:
                     tempBMP = BitmapFactory.decodeResource(
                             getResources(),
-                            R.drawable.diag_dx_down);
+                            R.drawable.cannone_dx_basso);
                     break;
                 case 4:
                     tempBMP = BitmapFactory.decodeResource(
                             getResources(),
-                            R.drawable.diag_sx_down);
+                            R.drawable.cannone_sx_basso);
                     break;
                 case 5:
                     tempBMP = BitmapFactory.decodeResource(
                             getResources(),
-                            R.drawable.diag_sx_up);
+                            R.drawable.cannone_sx_alto);
                     break;
             }
 
             if(game_over==true){
                 tempBMP = BitmapFactory.decodeResource(
                         getResources(),
-                        R.drawable.game_over);
+                        R.drawable.gameover);
             }
             tempBMP = Bitmap.createScaledBitmap(tempBMP,32,32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];
@@ -393,6 +392,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayTwo();
+                    imageCannone.setImageResource(R.drawable.tel2);
                 }
             }, 2000);
 
@@ -436,6 +436,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayOne();
+                    imageCannone.setImageResource(R.drawable.tel1);
                 }
             }, 2000);
         } catch (
@@ -477,6 +478,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayGo();
+                    imageCannone.setImageResource(R.drawable.go_tel);
                 }
             }, 2000);
         } catch (
@@ -519,6 +521,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayPixels();
+                    imageCannone.setImageResource(R.drawable.cannone_up);
                     countDownStart();
                 }
             }, 2000);
@@ -805,7 +808,7 @@ public class PlayActivity extends Activity {
         ragnatela[j+l_terzo_t - count - 1][3] = 238;
 
         try {
-            for (int i = 0; i < 317; i++) {
+            for (int i = 0; i < 318; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
@@ -857,7 +860,7 @@ public class PlayActivity extends Activity {
         ragnatela[j+l_quarto_t - count - 1][3] = 238;
 
         try {
-            for (int i = 0; i < 423; i++) {
+            for (int i = 0; i < 424; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
@@ -909,7 +912,7 @@ public class PlayActivity extends Activity {
         ragnatela[j+l_quinto_t - count - 1][3] = 238;
 
         try {
-            for (int i = 0; i < 521; i++) {
+            for (int i = 0; i < 522; i++) {
                 tmp = new JSONObject();
                 tmp.put("a", ragnatela[i][0]);
                 tmp.put("r", ragnatela[i][1]);
