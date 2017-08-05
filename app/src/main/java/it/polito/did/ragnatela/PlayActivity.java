@@ -35,7 +35,7 @@ public class PlayActivity extends Activity {
 
     private NetworkThread mNetworkThread = null;
     private NetworkThread ProiettileNetworkThread = null;
-    
+
     private int l_primo_t = 51;
     private int l_secondo_t = 133;
     private int l_terzo_t = 133;
@@ -67,6 +67,7 @@ public class PlayActivity extends Activity {
                 colors[2] = 255;    // B
 
                 try {
+
                     ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
                     ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
                     ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
@@ -81,7 +82,7 @@ public class PlayActivity extends Activity {
                     ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
 
                     //handleNetworkRequest(bugNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
-                    handleNetworkRequest(ProiettileNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+                    handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
                     p.update();
                    handlerRagnatela.postDelayed(aggiornaRagnatela, 0);
                 }
