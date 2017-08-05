@@ -46,7 +46,7 @@ public class PlayActivity extends Activity {
 
     private TextView tvSecond;
     private Handler handler ;
-    private Handler handlerRagnatela=new Handler();
+    private Handler handlerRagnatela;
     private Runnable runnable;
     int seconds = 60;
     private Button buttonRight, buttonLeft;
@@ -57,8 +57,8 @@ public class PlayActivity extends Activity {
 
     private Runnable aggiornaRagnatela = new Runnable() {
         @Override
-
         public void run() {
+
             //aggiorno i vari proiettili/bombe
             for (Proiettile p : proiettileList) {
                 int[] colors = new int[3];
@@ -67,6 +67,7 @@ public class PlayActivity extends Activity {
                 colors[2] = 255;    // B
 
                 try {
+                    pixels_array=initalizePixels();
 
                     ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
                     ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
@@ -81,15 +82,15 @@ public class PlayActivity extends Activity {
                     ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
                     ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
 
-                    //handleNetworkRequest(bugNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
+                    //handleNetworkRequest(ProiettileNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
                     handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
                     p.update();
-                   handlerRagnatela.postDelayed(aggiornaRagnatela, 0);
                 }
                 catch (Exception e) {
                     // Exception
                 }
             }
+            handlerRagnatela.postDelayed(aggiornaRagnatela, 30);
         }
     };
 
@@ -100,18 +101,38 @@ public class PlayActivity extends Activity {
         setContentView(R.layout.activity_play);
         unbinder = ButterKnife.bind(this);
 
+        mMainHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Toast.makeText(PlayActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        startHandlerThread();
+
+        try {
+            pixels_array=initalizePixels();
+            //initalizePixels();
+            setDisplayThree();
+        } catch (JSONException e) {
+            //Non dovrebbe avere problemi
+            e.printStackTrace();
+        }
+
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
         tvSecond.setTypeface(myTypeface);
-
         imageCannone = (ImageView) findViewById(R.id.imageCannone);
         buttonLeft = (Button) findViewById(R.id.leftButton);
         buttonRight = (Button) findViewById(R.id.rightButton);
-//thread che aggiorna le posizioni dei proiettili e delle bombe
 
+        startHandlerProiettileThread();
+
+
+        //thread che aggiorna le posizioni dei proiettili e delle bombe
         buttonRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
                 // ad ogni click vedo la posizione e agg proiettile nel ramo
                 posizioneAttuale++;
                 if (posizioneAttuale == 6) {
@@ -124,26 +145,30 @@ public class PlayActivity extends Activity {
                         imageCannone.setImageResource(R.drawable.cannone_up);
                         Proiettile p = new Proiettile(posizioneAttuale);
                         proiettileList.add(p);
+                        break;
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
                         Proiettile p2 = new Proiettile(posizioneAttuale);
                         proiettileList.add(p2);
+                        break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
                         Proiettile p3 = new Proiettile(posizioneAttuale);
                         proiettileList.add(p3);
+                        break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
                         Proiettile p4 = new Proiettile(posizioneAttuale);
                         proiettileList.add(p4);
+                        break;
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
                         Proiettile p5 = new Proiettile(posizioneAttuale);
                         proiettileList.add(p5);
+                        break;
                 }
-               aggiornaRagnatela.run();
-
-
+                    new Handler().postDelayed(aggiornaRagnatela, 30);
+                    //aggiornaRagnatela.run();
             }
         });
 
@@ -215,25 +240,7 @@ public class PlayActivity extends Activity {
             }
         });
 
-        pixels_array = preparePixelsArray();
 
-        mMainHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Toast.makeText(PlayActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
-            }
-        };
-
-        startHandlerThread();
-        startHandlerProiettileThread();
-
-        try {
-            initalizePixels();
-            setDisplayThree();
-        } catch (JSONException e) {
-            //Non dovrebbe avere problemi
-            e.printStackTrace();
-        }
     }
 
 
@@ -282,27 +289,25 @@ public class PlayActivity extends Activity {
         handler.postDelayed(runnable, 0);
     }
 
-
-    private void initalizePixels() throws JSONException {
-
+    // tutti spenti
+    JSONArray initalizePixels() throws JSONException{
+        pixels_array = new JSONArray();
         for (int i = 0; i < 1072; i++) {
             for (int j = 0; j < 4; j++) {
-                ragnatela[i][j] = 0; // tutti spenti
+                ragnatela[i][j] = 0;
             }
         }
         try {
-            JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < 1072; i++) {
-                jsonArray.put(ragnatela[i]);
+                pixels_array.put(ragnatela[i]);
             }
-
-            handleNetworkRequest(NetworkThread.SET_PIXELS, jsonArray, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
+            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
         }
-
-
+        catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return pixels_array;
     }
 
 
@@ -372,7 +377,6 @@ public class PlayActivity extends Activity {
         }
 
     }
-
     void setDisplayThree() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -416,7 +420,6 @@ public class PlayActivity extends Activity {
         }
 
     }
-
     void setDisplayTwo() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -459,7 +462,6 @@ public class PlayActivity extends Activity {
         }
 
     }
-
     void setDisplayOne() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -502,7 +504,6 @@ public class PlayActivity extends Activity {
         }
 
     }
-
     void setDisplayGo() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -559,119 +560,6 @@ public class PlayActivity extends Activity {
         ProiettileNetworkThread.start();
         ProiettileNetworkHandler = ProiettileNetworkThread.getNetworkHandler();
     }
-
-
-    /*
-    @OnClick(R.id.random_colors)
-    void setRandomColors() {
-
-        try {
-            JSONArray pixels_array = preparePixelsArray();
-
-            for (int i = 0; i < pixels_array.length(); i++) {
-                ((JSONObject) pixels_array.get(i)).put("r", (int) (Math.random() * 255.0f));
-                ((JSONObject) pixels_array.get(i)).put("g", (int) (Math.random() * 255.0f));
-                ((JSONObject) pixels_array.get(i)).put("b", (int) (Math.random() * 255.0f));
-            }
-            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    } */
-
-   /* @OnClick(R.id.highlight_components_button)
-    void highLightComponents() {
-        try {
-            pixels_array = preparePixelsArray();
-            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    } */
-
-   /* @OnClick(R.id.move_forward_button)
-    void movePixelsForward() {
-        try {
-            for (int j = 0; j < l_primo_t / 2; j++) {
-                mezza_bomba = setBomba(j);
-                handleNetworkRequest(NetworkThread.SET_PIXELS, mezza_bomba, 0, 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < pixels_array.length(); i++) {
-                jsonArray.put(pixels_array.get((i + pixels_array.length() - 10) % pixels_array.length()));
-            }
-            pixels_array = jsonArray;
-            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    } */
-
-     /* @OnClick(R.id.move_backward_button)
-    void movePixelsBackward() {
-        try {
-            for (int j = 0; j < (l_primo_t / 2); j++) {
-                mezzo_proiettile = setProiettile(j);
-                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < pixels_array.length(); i++) {
-                jsonArray.put(pixels_array.get((i + 10) % pixels_array.length()));
-            }
-            pixels_array = jsonArray;
-            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    } */
-
-    /* @OnClick(R.id.ramo1_button)
-    void ramo1() {
-        try {
-            JSONArray jsonArray = new JSONArray();
-
-            for (int i = 0; i < primo_t.length(); i++)
-                jsonArray.put(primo_t.get(i));
-
-
-            for (int i = 0; i < secondo_t.length(); i++)
-                jsonArray.put(secondo_t.get(i));
-
-
-            for (int i = 0; i < terzo_t.length(); i++)
-                jsonArray.put(terzo_t.get(i));
-
-            handleNetworkRequest(NetworkThread.SET_PIXELS, jsonArray, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-       try {
-            for (int i = 0; i < 26; i++) {
-                ((JSONObject) pixels_array.get(i)).put("r", 255);
-                ((JSONObject) pixels_array.get(i)).put("g", 0);
-                ((JSONObject) pixels_array.get(i)).put("b", 0);
-                wait(1000);
-                ((JSONObject) pixels_array.get(i)).put("r", 0);
-                ((JSONObject) pixels_array.get(i)).put("g", 255);
-                ((JSONObject) pixels_array.get(i)).put("b", 0);
-                handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    } */
 
     private void handleNetworkRequest(int what, Object payload, int arg1, int arg2) {
         Message msg = mNetworkHandler.obtainMessage();
