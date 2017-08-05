@@ -244,7 +244,7 @@ public class PlayActivity extends Activity {
             carro.hit();
         }
     }
-    
+
 
     public void startTimer(){
         timer = new Timer();
