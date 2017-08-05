@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -29,9 +31,11 @@ public class PlayActivity extends Activity {
 
     private JSONArray mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
 
-    private Handler mNetworkHandler, mMainHandler;
+    private Handler mNetworkHandler, mMainHandler, ProiettileMainHandler, ProiettileNetworkHandler;
 
     private NetworkThread mNetworkThread = null;
+    private NetworkThread ProiettileNetworkThread = null;
+    
     private int l_primo_t = 51;
     private int l_secondo_t = 133;
     private int l_terzo_t = 133;
@@ -41,24 +45,53 @@ public class PlayActivity extends Activity {
     private int[][] ragnatela = new int[1072][4];// per ogni px abbiamo 4 colonne che identificano i valori di a, rgb
 
     private TextView tvSecond;
-    private Handler handler;
+    private Handler handler ;
+    private Handler handlerRagnatela=new Handler();
     private Runnable runnable;
     int seconds = 60;
     private Button buttonRight, buttonLeft;
     private ImageView imageCannone;
     private int posizioneAttuale = 1;
     private boolean game_over = false;
+    private ArrayList<Proiettile> proiettileList = new ArrayList<Proiettile>();
+
     private Runnable aggiornaRagnatela = new Runnable() {
         @Override
+
         public void run() {
-            for (int j = 0; j < (l_secondo_t / 2); j++) {
-                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
-                //aggiorno i vari proiettili/bombe
+            //aggiorno i vari proiettili/bombe
+            for (Proiettile p : proiettileList) {
+                int[] colors = new int[3];
+                colors[0] = 0;    // R
+                colors[1] = 0;  // G
+                colors[2] = 255;    // B
+
+                try {
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
+
+                    //handleNetworkRequest(bugNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
+                    handleNetworkRequest(ProiettileNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+                    p.update();
+                   handlerRagnatela.postDelayed(aggiornaRagnatela, 0);
+                }
+                catch (Exception e) {
+                    // Exception
+                }
             }
-            handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
-            buttonRight.postDelayed(aggiornaRagnatela, 30);
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +107,7 @@ public class PlayActivity extends Activity {
         buttonLeft = (Button) findViewById(R.id.leftButton);
         buttonRight = (Button) findViewById(R.id.rightButton);
 //thread che aggiorna le posizioni dei proiettili e delle bombe
-        buttonRight.postDelayed(aggiornaRagnatela, 30);
+
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,63 +117,30 @@ public class PlayActivity extends Activity {
                     posizioneAttuale = 1;
                 }
                 setDisplayPixels();
+
                 switch (posizioneAttuale) {
                     case 1:
                         imageCannone.setImageResource(R.drawable.cannone_up);
-                        try {
-                            for (int j = 0; j < (l_primo_t / 2); j++) {
-                                mezzo_proiettile = setProiettileRamo1(j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        Proiettile p = new Proiettile(posizioneAttuale);
+                        proiettileList.add(p);
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
-                        try {
-                            for (int j = 0; j < (l_secondo_t / 2); j++) {
-                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        Proiettile p2 = new Proiettile(posizioneAttuale);
+                        proiettileList.add(p2);
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
-                        try {
-                            for (int j = 0; j < (l_terzo_t / 2); j++) {
-                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t + l_secondo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        Proiettile p3 = new Proiettile(posizioneAttuale);
+                        proiettileList.add(p3);
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
-                        try {
-                            for (int j = 0; j < (l_quarto_t / 2); j++) {
-                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t + l_secondo_t + l_terzo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        Proiettile p4 = new Proiettile(posizioneAttuale);
+                        proiettileList.add(p4);
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
-                        try {
-                            for (int j = 0; j < (l_quinto_t / 2); j++) {
-                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t + l_secondo_t + l_terzo_t + l_quarto_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        Proiettile p5 = new Proiettile(posizioneAttuale);
+                        proiettileList.add(p5);
                 }
+               aggiornaRagnatela.run();
 
 
             }
@@ -211,8 +211,6 @@ public class PlayActivity extends Activity {
                         }
                         break;
                 }
-
-
             }
         });
 
@@ -226,6 +224,7 @@ public class PlayActivity extends Activity {
         };
 
         startHandlerThread();
+        startHandlerProiettileThread();
 
         try {
             initalizePixels();
@@ -554,6 +553,12 @@ public class PlayActivity extends Activity {
         mNetworkHandler = mNetworkThread.getNetworkHandler();
     }
 
+    public void startHandlerProiettileThread() {
+        ProiettileNetworkThread = new NetworkThread(ProiettileMainHandler);
+        ProiettileNetworkThread.start();
+        ProiettileNetworkHandler = ProiettileNetworkThread.getNetworkHandler();
+    }
+
 
     /*
     @OnClick(R.id.random_colors)
@@ -573,8 +578,6 @@ public class PlayActivity extends Activity {
         }
 
     } */
-
-
 
    /* @OnClick(R.id.highlight_components_button)
     void highLightComponents() {
@@ -609,7 +612,6 @@ public class PlayActivity extends Activity {
         }
     } */
 
-
      /* @OnClick(R.id.move_backward_button)
     void movePixelsBackward() {
         try {
@@ -631,7 +633,6 @@ public class PlayActivity extends Activity {
             e.printStackTrace();
         }
     } */
-
 
     /* @OnClick(R.id.ramo1_button)
     void ramo1() {
@@ -673,6 +674,14 @@ public class PlayActivity extends Activity {
 
     private void handleNetworkRequest(int what, Object payload, int arg1, int arg2) {
         Message msg = mNetworkHandler.obtainMessage();
+        msg.what = what;
+        msg.obj = payload;
+        msg.arg1 = arg1;
+        msg.arg2 = arg2;
+        msg.sendToTarget();
+    }
+    private void handleNetworkRequest(Handler handler,int what, Object payload, int arg1, int arg2) {
+        Message msg = handler.obtainMessage();
         msg.what = what;
         msg.obj = payload;
         msg.arg1 = arg1;
