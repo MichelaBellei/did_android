@@ -20,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -31,10 +33,10 @@ public class PlayActivity extends Activity {
 
     private JSONArray mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
 
-    private Handler mNetworkHandler, mMainHandler, ProiettileMainHandler, ProiettileNetworkHandler;
+    private Handler mNetworkHandler, mMainHandler, bombaMainHandler, bombaNetworkHandler;
 
     private NetworkThread mNetworkThread = null;
-    private NetworkThread ProiettileNetworkThread = null;
+    private NetworkThread bombaNetworkThread = null;
 
     private int l_primo_t = 51;
     private int l_secondo_t = 133;
@@ -49,50 +51,15 @@ public class PlayActivity extends Activity {
     private Handler handlerRagnatela;
     private Runnable runnable;
     int seconds = 60;
+    private CarroArmato carro = new CarroArmato();
     private Button buttonRight, buttonLeft;
     private ImageView imageCannone;
     private int posizioneAttuale = 1;
     private boolean game_over = false;
     private ArrayList<Proiettile> proiettileList = new ArrayList<Proiettile>();
-
-    private Runnable aggiornaRagnatela = new Runnable() {
-        @Override
-        public void run() {
-
-            //aggiorno i vari proiettili/bombe
-            for (Proiettile p : proiettileList) {
-                int[] colors = new int[3];
-                colors[0] = 0;    // R
-                colors[1] = 0;  // G
-                colors[2] = 255;    // B
-
-                try {
-                    pixels_array=initalizePixels();
-
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
-
-                    //handleNetworkRequest(ProiettileNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0 ,0);
-                    handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-                    p.update();
-                }
-                catch (Exception e) {
-                    // Exception
-                }
-            }
-            handlerRagnatela.postDelayed(aggiornaRagnatela, 30);
-        }
-    };
+    private ArrayList<Bomba> bombaList = new ArrayList<Bomba>();
+    private Timer timer, timerBomba;
+    private TimerTask timerTask, timerTaskBomba;
 
 
     @Override
@@ -100,6 +67,8 @@ public class PlayActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         unbinder = ButterKnife.bind(this);
+
+        pixels_array=preparePixelsArray();
 
         mMainHandler = new Handler() {
             @Override
@@ -110,14 +79,6 @@ public class PlayActivity extends Activity {
 
         startHandlerThread();
 
-        try {
-            pixels_array=initalizePixels();
-            //initalizePixels();
-            setDisplayThree();
-        } catch (JSONException e) {
-            //Non dovrebbe avere problemi
-            e.printStackTrace();
-        }
 
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
@@ -126,8 +87,10 @@ public class PlayActivity extends Activity {
         buttonLeft = (Button) findViewById(R.id.leftButton);
         buttonRight = (Button) findViewById(R.id.rightButton);
 
-        startHandlerProiettileThread();
+        startHandlerBombaThread();
 
+
+        setDisplayThree();
 
         //thread che aggiorna le posizioni dei proiettili e delle bombe
         buttonRight.setOnClickListener(new View.OnClickListener() {
@@ -167,7 +130,7 @@ public class PlayActivity extends Activity {
                         proiettileList.add(p5);
                         break;
                 }
-                    new Handler().postDelayed(aggiornaRagnatela, 30);
+
                     //aggiornaRagnatela.run();
             }
         });
@@ -243,6 +206,80 @@ public class PlayActivity extends Activity {
 
     }
 
+     void showBomba() {
+
+         JSONArray pixels_array = preparePixelsArray();
+        //aggiorno i vari proiettili/bombe
+
+            try {
+                for (Bomba p : bombaList) {
+                    int[] colors = new int[3];
+                    colors[0] = 128;    // R
+                    colors[1] = 195;  // G
+                    colors[2] = 238;    // B
+
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
+                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
+                }
+                handleNetworkRequest(bombaNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+            }
+            catch (Exception e) {
+                // Exception
+            }
+    };
+
+    public void deathControl(int i){
+        if(!bombaList.get(i).isAlive()){
+            bombaList.remove(i);
+            carro.hit();
+        }
+    }
+    
+
+    public void startTimer(){
+        timer = new Timer();
+        initializeTimerTask();
+        timer.schedule(timerTask,0,500);
+    }
+
+    public void initializeTimerTask(){
+        timerTask = new TimerTask(){
+            public void run(){
+                for (int i=0; i<bombaList.size();i++){
+                    deathControl(i);
+                    bombaList.get(i).update();
+                }
+                showBomba();
+            }
+        };
+    }
+
+    public void startTimerBomba(){
+        timerBomba = new Timer();
+        initializeTimerTaskBomba();
+        timerBomba.schedule(timerTaskBomba,0,5000);
+    }
+
+    public void initializeTimerTaskBomba(){
+        timerTaskBomba = new TimerTask(){
+            public void run(){
+                Bomba b = new Bomba();
+                bombaList.add(b);
+            }
+        };
+    }
+
+
 
     public void countDownStart() {
         handler = new Handler();
@@ -290,7 +327,7 @@ public class PlayActivity extends Activity {
     }
 
     // tutti spenti
-    JSONArray initalizePixels() throws JSONException{
+    /*JSONArray initalizePixels() throws JSONException{
         pixels_array = new JSONArray();
         for (int i = 0; i < 1072; i++) {
             for (int j = 0; j < 4; j++) {
@@ -308,7 +345,8 @@ public class PlayActivity extends Activity {
             //e.printStackTrace();
         }
         return pixels_array;
-    }
+    }*/
+
 
 
     void setDisplayPixels() {
@@ -537,6 +575,9 @@ public class PlayActivity extends Activity {
                     setDisplayPixels();
                     imageCannone.setImageResource(R.drawable.cannone_up);
                     countDownStart();
+                    startTimer();
+                    startTimerBomba();
+
                 }
             }, 2000);
 
@@ -555,10 +596,10 @@ public class PlayActivity extends Activity {
         mNetworkHandler = mNetworkThread.getNetworkHandler();
     }
 
-    public void startHandlerProiettileThread() {
-        ProiettileNetworkThread = new NetworkThread(ProiettileMainHandler);
-        ProiettileNetworkThread.start();
-        ProiettileNetworkHandler = ProiettileNetworkThread.getNetworkHandler();
+    public void startHandlerBombaThread() {
+        bombaNetworkThread = new NetworkThread(bombaMainHandler);
+        bombaNetworkThread.start();
+        bombaNetworkHandler = bombaNetworkThread.getNetworkHandler();
     }
 
     private void handleNetworkRequest(int what, Object payload, int arg1, int arg2) {
@@ -898,21 +939,21 @@ public class PlayActivity extends Activity {
                 tmp = new JSONObject();
                 tmp.put("a", 0);
                 if (i < 522) {
-                    tmp.put("g", 255);
+                    tmp.put("g", 0);
                     tmp.put("b", 0);
                     tmp.put("r", 0);
                 } else if (i < 613) {
-                    tmp.put("r", 255);
+                    tmp.put("r", 0);
                     tmp.put("g", 0);
                     tmp.put("b", 0);
                 } else if (i < 791) {
-                    tmp.put("b", 255);
+                    tmp.put("b", 0);
                     tmp.put("g", 0);
                     tmp.put("r", 0);
                 } else {
-                    tmp.put("b", 255);
+                    tmp.put("b", 0);
                     tmp.put("g", 0);
-                    tmp.put("r", 255);
+                    tmp.put("r", 0);
                 }
                 pixels_array.put(tmp);
             }
