@@ -311,6 +311,8 @@ public class PlayActivity extends Activity {
                             }, 5000);   bombe a ripetizione primo tirante*/
                     } else {
                         game_over = true;
+                        timer.cancel();
+                        timerBomba.cancel();
                         setDisplayPixels();
                         Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
                         startActivity(activity_gameover);
@@ -964,3 +966,12 @@ public class PlayActivity extends Activity {
     }
 
 }
+
+//to do:
+// - proiettili laser
+// - show score
+// - frasi all hit e laser
+// - bombe diverse velocità--> quando la rossa, più veloce, ti colpisce ti blocca per 2 sec
+// - istruzioni
+// - classifica
+// -colorare i cerchi, quando ne completi uno aumenta lo step delle bombe

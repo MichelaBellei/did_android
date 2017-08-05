@@ -8,7 +8,6 @@ public class Bomba {
     int lifespan;
     boolean alive;
     boolean toCheck;
-    int type;
     int step;
 
     public boolean isAlive() {
@@ -55,16 +54,9 @@ public class Bomba {
         toCheck = false;
         alive = true;
 
-        double resType = Math.random();
-        if(resType <= 0.2) {
-            type = 1;
-        } else {
-            type = 0;
-        }
+
 
     }
-
-    public int getType() { return type; }
 
     public int getTirante() {
         return tirante;
