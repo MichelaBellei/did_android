@@ -31,24 +31,13 @@ public class PlayActivity extends Activity {
     Unbinder unbinder;
     private JSONArray pixels_array;
 
-    private JSONArray mezzo_proiettile, mezzo_proiettile2, mezzo_proiettile3, mezzo_proiettile4, mezzo_proiettile5;
-
     private Handler mNetworkHandler, mMainHandler, bombaMainHandler, bombaNetworkHandler;
 
     private NetworkThread mNetworkThread = null;
     private NetworkThread bombaNetworkThread = null;
 
-    private int l_primo_t = 51;
-    private int l_secondo_t = 133;
-    private int l_terzo_t = 133;
-    private int l_quarto_t = 105;
-    private int l_quinto_t = 98;
-
-    private int[][] ragnatela = new int[1072][4];// per ogni px abbiamo 4 colonne che identificano i valori di a, rgb
-
     private TextView tvSecond;
-    private Handler handler ;
-    private Handler handlerRagnatela;
+    private Handler handler;
     private Runnable runnable;
     int seconds = 60;
     private CarroArmato carro = new CarroArmato();
@@ -68,7 +57,7 @@ public class PlayActivity extends Activity {
         setContentView(R.layout.activity_play);
         unbinder = ButterKnife.bind(this);
 
-        pixels_array=preparePixelsArray();
+        pixels_array = preparePixelsArray();
 
         mMainHandler = new Handler() {
             @Override
@@ -89,49 +78,37 @@ public class PlayActivity extends Activity {
 
         startHandlerBombaThread();
 
-
         setDisplayThree();
 
         //thread che aggiorna le posizioni dei proiettili e delle bombe
         buttonRight.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 // ad ogni click vedo la posizione e agg proiettile nel ramo
                 posizioneAttuale++;
                 if (posizioneAttuale == 6) {
                     posizioneAttuale = 1;
                 }
                 setDisplayPixels();
-
                 switch (posizioneAttuale) {
                     case 1:
                         imageCannone.setImageResource(R.drawable.cannone_up);
-                        Proiettile p = new Proiettile(posizioneAttuale);
-                        proiettileList.add(p);
                         break;
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
-                        Proiettile p2 = new Proiettile(posizioneAttuale);
-                        proiettileList.add(p2);
                         break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
-                        Proiettile p3 = new Proiettile(posizioneAttuale);
-                        proiettileList.add(p3);
                         break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
-                        Proiettile p4 = new Proiettile(posizioneAttuale);
-                        proiettileList.add(p4);
                         break;
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
-                        Proiettile p5 = new Proiettile(posizioneAttuale);
-                        proiettileList.add(p5);
                         break;
                 }
-
-                    //aggiornaRagnatela.run();
+                Proiettile p = new Proiettile(posizioneAttuale);
+                proiettileList.add(p);
             }
         });
 
@@ -146,140 +123,149 @@ public class PlayActivity extends Activity {
                 switch (posizioneAttuale) {
                     case 1:
                         imageCannone.setImageResource(R.drawable.cannone_up);
-                        try {
-                            for (int j = 0; j < (l_primo_t / 2); j++) {
-                                mezzo_proiettile = setProiettileRamo1(j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
                     case 2:
                         imageCannone.setImageResource(R.drawable.cannone_dx_up);
-                        try {
-                            for (int j = 0; j < (l_secondo_t / 2); j++) {
-                                mezzo_proiettile2 = setProiettileRamo2(l_primo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile2, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
                     case 3:
                         imageCannone.setImageResource(R.drawable.cannone_dx_down);
-                        try {
-                            for (int j = 0; j < (l_terzo_t / 2); j++) {
-                                mezzo_proiettile3 = setProiettileRamo3(l_primo_t + l_secondo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile3, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
                     case 4:
                         imageCannone.setImageResource(R.drawable.cannone_sx_down);
-                        try {
-                            for (int j = 0; j < (l_quarto_t / 2); j++) {
-                                mezzo_proiettile4 = setProiettileRamo4(l_primo_t + l_secondo_t + l_terzo_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile4, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
                     case 5:
                         imageCannone.setImageResource(R.drawable.cannone_sx_up);
-                        try {
-                            for (int j = 0; j < (l_quinto_t / 2); j++) {
-                                mezzo_proiettile5 = setProiettileRamo5(l_primo_t + l_secondo_t + l_terzo_t + l_quarto_t, j);
-                                handleNetworkRequest(NetworkThread.SET_PIXELS, mezzo_proiettile5, 0, 0);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
                 }
+                Proiettile p = new Proiettile(posizioneAttuale);
+                proiettileList.add(p);
             }
         });
 
 
     }
 
-     void showBomba() {
+    void showBomba() {
 
-         JSONArray pixels_array = preparePixelsArray();
-        //aggiorno i vari proiettili/bombe
+        JSONArray pixels_array = preparePixelsArray();
+        //aggiorno le varie bombe
+        try {
+            for (Bomba p : bombaList) {
+                int[] colors = new int[3];
+                colors[0] = 255;    // R
+                colors[1] = 255;  // G
+                colors[2] = 0;    // B
 
-            try {
-                for (Bomba p : bombaList) {
-                    int[] colors = new int[3];
-                    colors[0] = 128;    // R
-                    colors[1] = 195;  // G
-                    colors[2] = 238;    // B
-
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
-                    ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
-                }
-                handleNetworkRequest(bombaNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+                ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
             }
-            catch (Exception e) {
-                // Exception
-            }
-    };
+            handleNetworkRequest(bombaNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+        } catch (Exception e) {
+            // Exception
+        }
+    }
+    ;
 
-    public void deathControl(int i){
-        if(!bombaList.get(i).isAlive()){
+    void showProiettile() {
+
+        JSONArray pixels_array = preparePixelsArray();
+        try {
+            for (Proiettile p : proiettileList) {
+                int[] colors = new int[3];
+                colors[0] = 128;    // R
+                colors[1] = 195;  // G
+                colors[2] = 235;    // B
+
+                ((JSONObject) pixels_array.get(p.getPos1())).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos1())).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos1())).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos2())).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos1() + 1)).put("b", colors[2]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("r", colors[0]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("g", colors[1]);
+                ((JSONObject) pixels_array.get(p.getPos2() - 1)).put("b", colors[2]);
+            }
+            handleNetworkRequest(bombaNetworkHandler, NetworkThread.SET_PIXELS, pixels_array, 0, 0);
+        } catch (Exception e) {
+            // Exception
+        }
+    }
+    ;
+
+    public void deathControl(int i) {
+        if (!bombaList.get(i).isAlive()) {
             bombaList.remove(i);
             carro.hit();
         }
     }
 
-
-    public void startTimer(){
-        timer = new Timer();
-        initializeTimerTask();
-        timer.schedule(timerTask,0,500);
+    //controllo se una bomba e un proiettile si incontrano
+    public void hitControl(int i) {
+        for (int j = 0; j < proiettileList.size(); j++) {
+            if (bombaList.get(i).getTirante() == proiettileList.get(j).getTirante()) {
+                if (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()) {
+                    bombaList.remove(i);
+                    proiettileList.remove(j);
+                    carro.upScore();
+                }
+            }
+        }
     }
 
-    public void initializeTimerTask(){
-        timerTask = new TimerTask(){
-            public void run(){
-                for (int i=0; i<bombaList.size();i++){
+    //timer per aggiornare posizioni di bombe e proiettili
+    public void startTimer() {
+        timer = new Timer();
+        initializeTimerTask();
+        timer.schedule(timerTask, 0, 500);
+    }
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                for (int i = 0; i < bombaList.size(); i++) {
                     deathControl(i);
+                    hitControl(i);
                     bombaList.get(i).update();
                 }
                 showBomba();
+
+                for (int i = 0; i < proiettileList.size(); i++) {
+                    proiettileList.get(i).update();
+                }
+                showProiettile();
             }
         };
     }
 
-    public void startTimerBomba(){
+    //timer per creazione bombe
+    public void startTimerBomba() {
         timerBomba = new Timer();
         initializeTimerTaskBomba();
-        timerBomba.schedule(timerTaskBomba,0,5000);
+        timerBomba.schedule(timerTaskBomba, 0, 5000);
     }
 
-    public void initializeTimerTaskBomba(){
-        timerTaskBomba = new TimerTask(){
-            public void run(){
+    public void initializeTimerTaskBomba() {
+        timerTaskBomba = new TimerTask() {
+            public void run() {
                 Bomba b = new Bomba();
                 bombaList.add(b);
             }
         };
     }
-
-
 
     public void countDownStart() {
         handler = new Handler();
@@ -295,20 +281,6 @@ public class PlayActivity extends Activity {
                         if (seconds <= 20) {
                             tvSecond.setTextColor(Color.RED);
                         }
-
-                           /* new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        for (int j = 0; j < l_primo_t / 2; j++) {
-                                            mezza_bomba = setBombaRamo1(j);
-                                            handleNetworkRequest(NetworkThread.SET_PIXELS, mezza_bomba, 0, 0);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, 5000);   bombe a ripetizione primo tirante*/
                     } else {
                         game_over = true;
                         timer.cancel();
@@ -317,7 +289,6 @@ public class PlayActivity extends Activity {
                         Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
                         startActivity(activity_gameover);
                         handler.removeCallbacks(runnable);
-                        //chiamata activity classifica e game over
                     }
 
                 } catch (Exception e) {
@@ -327,29 +298,6 @@ public class PlayActivity extends Activity {
         };
         handler.postDelayed(runnable, 0);
     }
-
-    // tutti spenti
-    /*JSONArray initalizePixels() throws JSONException{
-        pixels_array = new JSONArray();
-        for (int i = 0; i < 1072; i++) {
-            for (int j = 0; j < 4; j++) {
-                ragnatela[i][j] = 0;
-            }
-        }
-        try {
-
-            for (int i = 0; i < 1072; i++) {
-                pixels_array.put(ragnatela[i]);
-            }
-            handleNetworkRequest(NetworkThread.SET_PIXELS, pixels_array, 0, 0);
-        }
-        catch (Exception e) {
-            //e.printStackTrace();
-        }
-        return pixels_array;
-    }*/
-
-
 
     void setDisplayPixels() {
         try {
@@ -417,6 +365,7 @@ public class PlayActivity extends Activity {
         }
 
     }
+
     void setDisplayThree() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -450,7 +399,7 @@ public class PlayActivity extends Activity {
                     setDisplayTwo();
                     imageCannone.setImageResource(R.drawable.tel2);
                 }
-            }, 2000);
+            }, 1000);
 
         } catch (
                 JSONException e)
@@ -460,6 +409,7 @@ public class PlayActivity extends Activity {
         }
 
     }
+
     void setDisplayTwo() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -493,7 +443,7 @@ public class PlayActivity extends Activity {
                     setDisplayOne();
                     imageCannone.setImageResource(R.drawable.tel1);
                 }
-            }, 2000);
+            }, 1000);
         } catch (
                 JSONException e)
 
@@ -502,6 +452,7 @@ public class PlayActivity extends Activity {
         }
 
     }
+
     void setDisplayOne() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -535,7 +486,7 @@ public class PlayActivity extends Activity {
                     setDisplayGo();
                     imageCannone.setImageResource(R.drawable.go_tel);
                 }
-            }, 2000);
+            }, 1000);
         } catch (
                 JSONException e)
 
@@ -544,6 +495,7 @@ public class PlayActivity extends Activity {
         }
 
     }
+
     void setDisplayGo() {
         try {
             JSONArray pixels_array = new JSONArray();
@@ -581,12 +533,10 @@ public class PlayActivity extends Activity {
                     startTimerBomba();
 
                 }
-            }, 2000);
+            }, 1000);
 
         } catch (
-                JSONException e)
-
-        {
+                JSONException e) {
             // There should be no Exception
         }
 
@@ -612,7 +562,8 @@ public class PlayActivity extends Activity {
         msg.arg2 = arg2;
         msg.sendToTarget();
     }
-    private void handleNetworkRequest(Handler handler,int what, Object payload, int arg1, int arg2) {
+
+    private void handleNetworkRequest(Handler handler, int what, Object payload, int arg1, int arg2) {
         Message msg = handler.obtainMessage();
         msg.what = what;
         msg.obj = payload;
@@ -621,318 +572,7 @@ public class PlayActivity extends Activity {
         msg.sendToTarget();
     }
 
-    JSONArray setProiettileRamo1(int j) {//muoviamo il proiettile in su
-        JSONObject tmp;
-        JSONArray mezzo_proiettile = new JSONArray();
-
-        ragnatela[j][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j][1] = 0;
-        ragnatela[j][2] = 0;
-        ragnatela[j][3] = 0;
-
-        ragnatela[j + 1][0] = 100;
-        ragnatela[j + 1][1] = 128;
-        ragnatela[j + 1][2] = 195;
-        ragnatela[j + 1][3] = 238;
-
-        ragnatela[j + 2][0] = 255;
-        ragnatela[j + 2][1] = 128;
-        ragnatela[j + 2][2] = 195;
-        ragnatela[j + 2][3] = 238;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[l_primo_t - j][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[l_primo_t - j][1] = 0;
-        ragnatela[l_primo_t - j][2] = 0;
-        ragnatela[l_primo_t - j][3] = 0;
-
-        ragnatela[l_primo_t - j - 1][0] = 100;
-        ragnatela[l_primo_t - j - 1][1] = 128;
-        ragnatela[l_primo_t - j - 1][2] = 195;
-        ragnatela[l_primo_t - j - 1][3] = 238;
-
-        ragnatela[l_primo_t - j - 2][0] = 255;
-        ragnatela[l_primo_t - j - 2][1] = 128;
-        ragnatela[l_primo_t - j - 2][2] = 195;
-        ragnatela[l_primo_t - j - 2][3] = 238;
-
-        try {
-            for (int i = 0; i < 52; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezzo_proiettile.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezzo_proiettile;
-    }
-
-    JSONArray setProiettileRamo2(int j, int count) {//muoviamo il proiettile in su
-        JSONObject tmp;
-        JSONArray mezzo_proiettile2 = new JSONArray();
-
-        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + count][1] = 0;
-        ragnatela[j + count][2] = 0;
-        ragnatela[j + count][3] = 0;
-
-        ragnatela[j + count + 1][0] = 100;
-        ragnatela[j + count + 1][1] = 128;
-        ragnatela[j + count + 1][2] = 195;
-        ragnatela[j + count + 1][3] = 238;
-
-        ragnatela[j + count + 2][0] = 255;
-        ragnatela[j + count + 2][1] = 128;
-        ragnatela[j + count + 2][2] = 195;
-        ragnatela[j + count + 2][3] = 238;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[j + l_secondo_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + l_secondo_t - count + 1][1] = 0;
-        ragnatela[j + l_secondo_t - count + 1][2] = 0;
-        ragnatela[j + l_secondo_t - count + 1][3] = 0;
-
-        ragnatela[j + l_secondo_t - count][0] = 100;
-        ragnatela[j + l_secondo_t - count][1] = 128;
-        ragnatela[j + l_secondo_t - count][2] = 195;
-        ragnatela[j + l_secondo_t - count][3] = 238;
-
-        ragnatela[j + l_secondo_t - count - 1][0] = 255;
-        ragnatela[j + l_secondo_t - count - 1][1] = 128;
-        ragnatela[j + l_secondo_t - count - 1][2] = 195;
-        ragnatela[j + l_secondo_t - count - 1][3] = 238;
-
-        try {
-            for (int i = 0; i < 186; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezzo_proiettile2.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezzo_proiettile2;
-    }
-
-    JSONArray setProiettileRamo3(int j, int count) {//muoviamo il proiettile in su
-        JSONObject tmp;
-        JSONArray mezzo_proiettile3 = new JSONArray();
-
-        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + count][1] = 0;
-        ragnatela[j + count][2] = 0;
-        ragnatela[j + count][3] = 0;
-
-        ragnatela[j + count + 1][0] = 100;
-        ragnatela[j + count + 1][1] = 128;
-        ragnatela[j + count + 1][2] = 195;
-        ragnatela[j + count + 1][3] = 238;
-
-        ragnatela[j + count + 2][0] = 255;
-        ragnatela[j + count + 2][1] = 128;
-        ragnatela[j + count + 2][2] = 195;
-        ragnatela[j + count + 2][3] = 238;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[j + l_terzo_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + l_terzo_t - count + 1][1] = 0;
-        ragnatela[j + l_terzo_t - count + 1][2] = 0;
-        ragnatela[j + l_terzo_t - count + 1][3] = 0;
-
-        ragnatela[j + l_terzo_t - count][0] = 100;
-        ragnatela[j + l_terzo_t - count][1] = 128;
-        ragnatela[j + l_terzo_t - count][2] = 195;
-        ragnatela[j + l_terzo_t - count][3] = 238;
-
-        ragnatela[j + l_terzo_t - count - 1][0] = 255;
-        ragnatela[j + l_terzo_t - count - 1][1] = 128;
-        ragnatela[j + l_terzo_t - count - 1][2] = 195;
-        ragnatela[j + l_terzo_t - count - 1][3] = 238;
-
-        try {
-            for (int i = 0; i < 318; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezzo_proiettile3.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezzo_proiettile3;
-    }
-
-    JSONArray setProiettileRamo4(int j, int count) {//muoviamo il proiettile in su
-        JSONObject tmp;
-        JSONArray mezzo_proiettile4 = new JSONArray();
-
-        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + count][1] = 0;
-        ragnatela[j + count][2] = 0;
-        ragnatela[j + count][3] = 0;
-
-        ragnatela[j + count + 1][0] = 100;
-        ragnatela[j + count + 1][1] = 128;
-        ragnatela[j + count + 1][2] = 195;
-        ragnatela[j + count + 1][3] = 238;
-
-        ragnatela[j + count + 2][0] = 255;
-        ragnatela[j + count + 2][1] = 128;
-        ragnatela[j + count + 2][2] = 195;
-        ragnatela[j + count + 2][3] = 238;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[j + l_quarto_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + l_quarto_t - count + 1][1] = 0;
-        ragnatela[j + l_quarto_t - count + 1][2] = 0;
-        ragnatela[j + l_quarto_t - count + 1][3] = 0;
-
-        ragnatela[j + l_quarto_t - count][0] = 100;
-        ragnatela[j + l_quarto_t - count][1] = 128;
-        ragnatela[j + l_quarto_t - count][2] = 195;
-        ragnatela[j + l_quarto_t - count][3] = 238;
-
-        ragnatela[j + l_quarto_t - count - 1][0] = 255;
-        ragnatela[j + l_quarto_t - count - 1][1] = 128;
-        ragnatela[j + l_quarto_t - count - 1][2] = 195;
-        ragnatela[j + l_quarto_t - count - 1][3] = 238;
-
-        try {
-            for (int i = 0; i < 424; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezzo_proiettile4.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezzo_proiettile4;
-    }
-
-    JSONArray setProiettileRamo5(int j, int count) {//muoviamo il proiettile in su
-        JSONObject tmp;
-        JSONArray mezzo_proiettile5 = new JSONArray();
-
-        ragnatela[j + count][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + count][1] = 0;
-        ragnatela[j + count][2] = 0;
-        ragnatela[j + count][3] = 0;
-
-        ragnatela[j + count + 1][0] = 100;
-        ragnatela[j + count + 1][1] = 128;
-        ragnatela[j + count + 1][2] = 195;
-        ragnatela[j + count + 1][3] = 238;
-
-        ragnatela[j + count + 2][0] = 255;
-        ragnatela[j + count + 2][1] = 128;
-        ragnatela[j + count + 2][2] = 195;
-        ragnatela[j + count + 2][3] = 238;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[j + l_quinto_t - count + 1][0] = 0;// coloriamo i primi 3 led blu
-        ragnatela[j + l_quinto_t - count + 1][1] = 0;
-        ragnatela[j + l_quinto_t - count + 1][2] = 0;
-        ragnatela[j + l_quinto_t - count + 1][3] = 0;
-
-        ragnatela[j + l_quinto_t - count][0] = 100;
-        ragnatela[j + l_quinto_t - count][1] = 128;
-        ragnatela[j + l_quinto_t - count][2] = 195;
-        ragnatela[j + l_quinto_t - count][3] = 238;
-
-        ragnatela[j + l_quinto_t - count - 1][0] = 255;
-        ragnatela[j + l_quinto_t - count - 1][1] = 128;
-        ragnatela[j + l_quinto_t - count - 1][2] = 195;
-        ragnatela[j + l_quinto_t - count - 1][3] = 238;
-
-        try {
-            for (int i = 0; i < 522; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezzo_proiettile5.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezzo_proiettile5;
-    }
-
-    JSONArray setBombaRamo1(int j) {//muoviamo la bomba in giù
-        JSONObject tmp;
-        JSONArray mezza_bomba = new JSONArray();
-
-        ragnatela[l_primo_t / 2 - j][0] = 0;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 - j][1] = 0;
-        ragnatela[l_primo_t / 2 - j][2] = 0;
-        ragnatela[l_primo_t / 2 - j][3] = 0;
-
-        ragnatela[l_primo_t / 2 - j - 1][0] = 100;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 - j - 1][1] = 255;
-        ragnatela[l_primo_t / 2 - j - 1][2] = 0;
-        ragnatela[l_primo_t / 2 - j - 1][3] = 0;
-
-        ragnatela[l_primo_t / 2 - j - 2][0] = 255;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 - j - 2][1] = 255;
-        ragnatela[l_primo_t / 2 - j - 2][2] = 0;
-        ragnatela[l_primo_t / 2 - j - 2][3] = 0;
-
-        // anche gli ultimi si accendono
-
-        ragnatela[l_primo_t / 2 + j][0] = 0;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 + j][1] = 0;
-        ragnatela[l_primo_t / 2 + j][2] = 0;
-        ragnatela[l_primo_t / 2 + j][3] = 0;
-
-        ragnatela[l_primo_t / 2 + j + 1][0] = 100;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 + j + 1][1] = 255;
-        ragnatela[l_primo_t / 2 + j + 1][2] = 0;
-        ragnatela[l_primo_t / 2 + j + 1][3] = 0;
-
-        ragnatela[l_primo_t / 2 + j + 2][0] = 255;// coloriamo i primi 3 led rossi
-        ragnatela[l_primo_t / 2 + j + 2][1] = 255;
-        ragnatela[l_primo_t / 2 + j + 2][2] = 0;
-        ragnatela[l_primo_t / 2 + j + 2][3] = 0;
-
-        try {
-            for (int i = 0; i < 52; i++) {
-                tmp = new JSONObject();
-                tmp.put("a", ragnatela[i][0]);
-                tmp.put("r", ragnatela[i][1]);
-                tmp.put("g", ragnatela[i][2]);
-                tmp.put("b", ragnatela[i][3]);
-
-                mezza_bomba.put(tmp);
-            }
-        } catch (JSONException exception) {
-            // No errors expected here
-        }
-        return mezza_bomba;
-    }
-
+    //spenti tutti i led
     JSONArray preparePixelsArray() {
         JSONArray pixels_array = new JSONArray();
         JSONObject tmp;
@@ -971,7 +611,6 @@ public class PlayActivity extends Activity {
 // - proiettili laser
 // - show score
 // - frasi all hit e laser
-// - bombe diverse velocità--> quando la rossa, più veloce, ti colpisce ti blocca per 2 sec
 // - istruzioni
 // - classifica
 // -colorare i cerchi, quando ne completi uno aumenta lo step delle bombe
