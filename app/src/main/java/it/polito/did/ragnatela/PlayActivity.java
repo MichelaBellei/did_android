@@ -36,20 +36,23 @@ public class PlayActivity extends Activity {
     private NetworkThread mNetworkThread = null;
     private NetworkThread bombaNetworkThread = null;
 
-    private TextView tvSecond;
+    private TextView tvSecond, score,suggestion;
     private Handler handler;
     private Runnable runnable;
     int seconds = 60;
     private CarroArmato carro = new CarroArmato();
     private Button buttonRight, buttonLeft;
-    private ImageView imageCannone;
+    private Button imageCannone;
     private int posizioneAttuale = 1;
     private boolean game_over = false;
     private ArrayList<Proiettile> proiettileList = new ArrayList<Proiettile>();
     private ArrayList<Bomba> bombaList = new ArrayList<Bomba>();
     private Timer timer, timerBomba;
     private TimerTask timerTask, timerTaskBomba;
-
+    private Suggestion s=new Suggestion();
+    String sug=s.getUccidili();
+    Anelli anello = new Anelli(1);
+    private int ringCount=522, step=1, stepBomba=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +71,17 @@ public class PlayActivity extends Activity {
 
         startHandlerThread();
 
-
         tvSecond = (TextView) findViewById(R.id.txtTimerSecond);
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
         tvSecond.setTypeface(myTypeface);
-        imageCannone = (ImageView) findViewById(R.id.imageCannone);
+        score = (TextView) findViewById(R.id.score);
+        score.setTypeface(myTypeface);
+        suggestion = (TextView) findViewById(R.id.suggestion);
+        suggestion.setTypeface(myTypeface);
+        imageCannone = (Button) findViewById(R.id.imageCannone);
         buttonLeft = (Button) findViewById(R.id.leftButton);
         buttonRight = (Button) findViewById(R.id.rightButton);
+        anello.setStep(anello.getAnello());
 
         startHandlerBombaThread();
 
@@ -92,21 +99,26 @@ public class PlayActivity extends Activity {
                 setDisplayPixels();
                 switch (posizioneAttuale) {
                     case 1:
-                        imageCannone.setImageResource(R.drawable.cannone_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_up);
                         break;
                     case 2:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_dx_up);
                         break;
                     case 3:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_down);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_dx_down);
                         break;
                     case 4:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_sx_down);
                         break;
                     case 5:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_sx_up);
                         break;
                 }
+            }
+        });
+
+        imageCannone.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
                 Proiettile p = new Proiettile(posizioneAttuale);
                 proiettileList.add(p);
             }
@@ -122,27 +134,23 @@ public class PlayActivity extends Activity {
                 setDisplayPixels();
                 switch (posizioneAttuale) {
                     case 1:
-                        imageCannone.setImageResource(R.drawable.cannone_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_up);
                         break;
                     case 2:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_dx_up);
                         break;
                     case 3:
-                        imageCannone.setImageResource(R.drawable.cannone_dx_down);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_dx_down);
                         break;
                     case 4:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_down);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_sx_down);
                         break;
                     case 5:
-                        imageCannone.setImageResource(R.drawable.cannone_sx_up);
+                        imageCannone.setBackgroundResource(R.drawable.cannone_sx_up);
                         break;
                 }
-                Proiettile p = new Proiettile(posizioneAttuale);
-                proiettileList.add(p);
             }
         });
-
-
     }
 
     void showBomba() {
@@ -150,6 +158,12 @@ public class PlayActivity extends Activity {
         JSONArray pixels_array = preparePixelsArray();
         //aggiorno le varie bombe
         try {
+            for(int j=522; j< ringCount; j++) {
+                ((JSONObject) pixels_array.get(j)).put("r", 0);
+                ((JSONObject) pixels_array.get(j)).put("g", 255);
+                ((JSONObject) pixels_array.get(j)).put("b", 0);
+            }
+
             for (Bomba p : bombaList) {
                 int[] colors = new int[3];
                 colors[0] = 255;    // R
@@ -175,7 +189,6 @@ public class PlayActivity extends Activity {
         }
     }
     ;
-
     void showProiettile() {
 
         JSONArray pixels_array = preparePixelsArray();
@@ -205,11 +218,11 @@ public class PlayActivity extends Activity {
         }
     }
     ;
-
     public void deathControl(int i) {
         if (!bombaList.get(i).isAlive()) {
             bombaList.remove(i);
             carro.hit();
+            sug=s.getCarroColpito();
         }
     }
 
@@ -217,20 +230,64 @@ public class PlayActivity extends Activity {
     public void hitControl(int i) {
         for (int j = 0; j < proiettileList.size(); j++) {
             if (bombaList.get(i).getTirante() == proiettileList.get(j).getTirante()) {
-                if (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()) {
+                if ((bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()) || (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()-1)){
                     bombaList.remove(i);
                     proiettileList.remove(j);
                     carro.upScore();
+                    sug=s.getBombaColpita();
+                    ring();
                 }
             }
         }
     }
+    public void ring() {
+        try {
+
+            if (ringCount < anello.getStop()) {//se non ha finito l'anello
+                if (step == 6) {
+                    step = 1;
+                }
+                switch (step){
+                    case 1:
+                        ringCount= ringCount+ anello.getStep1();
+                        step++;
+                        break;
+                    case 2:
+                        ringCount= ringCount+ anello.getStep2();
+                        step++;
+                        break;
+                    case 3:
+                        ringCount= ringCount+ anello.getStep3();
+                        step++;
+                        break;
+                    case 4:
+                        ringCount= ringCount+ anello.getStep4();
+                        step++;
+                        break;
+                    case 5:
+                        ringCount= ringCount+ anello.getStep5();
+                        step++;
+                        break;
+                }
+                if (ringCount == anello.getStop()) {
+                    ringCount++;
+                    // incrementiamo lo step bombe e cambiare anello
+                    anello.setAnello(anello.getAnello()+1);
+                    anello.setStep(anello.getAnello());
+                    stepBomba++;
+                }
+            }
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+    }
+
 
     //timer per aggiornare posizioni di bombe e proiettili
     public void startTimer() {
         timer = new Timer();
         initializeTimerTask();
-        timer.schedule(timerTask, 0, 500);
+        timer.schedule(timerTask, 0, 300);
     }
 
     public void initializeTimerTask() {
@@ -255,13 +312,13 @@ public class PlayActivity extends Activity {
     public void startTimerBomba() {
         timerBomba = new Timer();
         initializeTimerTaskBomba();
-        timerBomba.schedule(timerTaskBomba, 0, 5000);
+        timerBomba.schedule(timerTaskBomba, 0, 3000);
     }
 
     public void initializeTimerTaskBomba() {
         timerTaskBomba = new TimerTask() {
             public void run() {
-                Bomba b = new Bomba();
+                Bomba b = new Bomba(stepBomba);
                 bombaList.add(b);
             }
         };
@@ -277,8 +334,12 @@ public class PlayActivity extends Activity {
 
                     if (seconds > 0) {
                         seconds = seconds - 1;
-                        tvSecond.setText("" + String.format("%02d", seconds));
+                        tvSecond.setText(String.format("%02d", seconds));
+                        int punteggio=carro.getScore();
+                        score.setText(String.format("%2d",punteggio) + "!");
+                        suggestion.setText(String.format("%s",sug));
                         if (seconds <= 20) {
+                            sug=s.getTempo();
                             tvSecond.setTextColor(Color.RED);
                         }
                     } else {
@@ -397,7 +458,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayTwo();
-                    imageCannone.setImageResource(R.drawable.tel2);
+                    imageCannone.setBackgroundResource(R.drawable.tel2);
                 }
             }, 1000);
 
@@ -441,7 +502,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayOne();
-                    imageCannone.setImageResource(R.drawable.tel1);
+                    imageCannone.setBackgroundResource(R.drawable.tel1);
                 }
             }, 1000);
         } catch (
@@ -484,7 +545,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayGo();
-                    imageCannone.setImageResource(R.drawable.go_tel);
+                    imageCannone.setBackgroundResource(R.drawable.go_tel);
                 }
             }, 1000);
         } catch (
@@ -527,7 +588,7 @@ public class PlayActivity extends Activity {
                 @Override
                 public void run() {
                     setDisplayPixels();
-                    imageCannone.setImageResource(R.drawable.cannone_up);
+                    imageCannone.setBackgroundResource(R.drawable.cannone_up);
                     countDownStart();
                     startTimer();
                     startTimerBomba();
@@ -608,9 +669,6 @@ public class PlayActivity extends Activity {
 }
 
 //to do:
-// - proiettili laser
-// - show score
-// - frasi all hit e laser
 // - istruzioni
 // - classifica
-// -colorare i cerchi, quando ne completi uno aumenta lo step delle bombe
+// - colorare i cerchi, quando ne completi uno aumenta lo step delle bombe

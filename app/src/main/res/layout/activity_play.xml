@@ -8,8 +8,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.15">
+        android:layout_weight="0.15"
+        android:orientation="horizontal">
         <!-- inserire text view dell'omino -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:textColor="#eb1f1c"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="0"
+                android:id="@+id/score"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:textColor="#1f1bf4"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Kill all the enemies!!!!"
+                android:id="@+id/suggestion"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15">
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -49,12 +87,12 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.05"></LinearLayout>
 
-            <ImageView
+            <Button
                 android:id="@+id/imageCannone"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.6"
-                android:src="@drawable/tel3" />
+                android:background="@drawable/tel3" />
 
             <LinearLayout
                 android:layout_width="match_parent"

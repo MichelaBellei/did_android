@@ -22,7 +22,7 @@ public class Bomba {
         this.alive = false;
     }
 
-    public Bomba() {
+    public Bomba(int st) {
         double res = Math.random();
         if(res < 0.2) {
             tirante = 1;
@@ -50,12 +50,9 @@ public class Bomba {
             pos2 = 472;
             lifespan = 424 + 97;
         }
-        step = 1;
         toCheck = false;
         alive = true;
-
-
-
+        step=st;
     }
 
     public int getTirante() {
