@@ -671,4 +671,3 @@ public class PlayActivity extends Activity {
 //to do:
 // - istruzioni
 // - classifica
-// - colorare i cerchi, quando ne completi uno aumenta lo step delle bombe
