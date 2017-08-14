@@ -18,6 +18,7 @@ public class GameOverActivity extends AppCompatActivity {
 
         classifica = (TextView) findViewById(R.id.classifica);
         classifica.setTypeface(myTypeface);
+        
 
         Button button_play_again = (Button) findViewById(R.id.play_again_button);
         button_play_again.setOnClickListener(new View.OnClickListener() {
