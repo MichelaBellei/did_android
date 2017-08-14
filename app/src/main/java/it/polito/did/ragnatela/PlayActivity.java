@@ -282,7 +282,6 @@ public class PlayActivity extends Activity {
         }
     }
 
-
     //timer per aggiornare posizioni di bombe e proiettili
     public void startTimer() {
         timer = new Timer();

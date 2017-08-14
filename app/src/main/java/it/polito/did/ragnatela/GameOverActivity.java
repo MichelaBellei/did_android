@@ -1,17 +1,23 @@
 package it.polito.did.ragnatela;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class GameOverActivity extends AppCompatActivity {
-
+    Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
+    TextView classifica;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
+
+        classifica = (TextView) findViewById(R.id.classifica);
+        classifica.setTypeface(myTypeface);
 
         Button button_play_again = (Button) findViewById(R.id.play_again_button);
         button_play_again.setOnClickListener(new View.OnClickListener() {
