@@ -63,18 +63,21 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.65">
+                android:layout_weight="0.65"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/play_again_button"
-                    android:layout_width="124dp"
-                    android:layout_height="106dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="match_parent"
                     android:background="@drawable/play_again" />
 
                 <Button
                     android:id="@+id/exit_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="108dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="match_parent"
                     android:background="@drawable/exit" />
             </LinearLayout>
 
