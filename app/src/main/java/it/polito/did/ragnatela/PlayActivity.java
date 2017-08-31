@@ -330,11 +330,10 @@ public class PlayActivity extends Activity {
             public void run() {
                 handler.postDelayed(this, 1000);
                 try {
-
+                    int punteggio=carro.getScore();
                     if (seconds > 0) {
                         seconds = seconds - 1;
                         tvSecond.setText(String.format("%02d", seconds));
-                        int punteggio=carro.getScore();
                         score.setText(String.format("%2d",punteggio) + "!");
                         suggestion.setText(String.format("%s",sug));
                         if (seconds <= 20) {
@@ -347,8 +346,12 @@ public class PlayActivity extends Activity {
                         timerBomba.cancel();
                         setDisplayPixels();
                         Intent activity_gameover = new Intent(PlayActivity.this, GameOverActivity.class);
+                        Bundle b = new Bundle();
+                        b.putInt("score", punteggio); //Your id
+                        activity_gameover.putExtras(b); //Put your id to your next Intent
                         startActivity(activity_gameover);
                         handler.removeCallbacks(runnable);
+                        //finish();
                     }
 
                 } catch (Exception e) {

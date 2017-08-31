@@ -9,16 +9,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class GameOverActivity extends AppCompatActivity {
-    Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
-    TextView classifica;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/wareagle.ttf");
+        TextView classifica;
+
+        Bundle b = getIntent().getExtras();
+        int value = -1; // or other values
+        if(b != null)
+          value = b.getInt("score");
+
         classifica = (TextView) findViewById(R.id.classifica);
         classifica.setTypeface(myTypeface);
-        
+        classifica.setText(String.format("%2d",value) + "!");
 
         Button button_play_again = (Button) findViewById(R.id.play_again_button);
         button_play_again.setOnClickListener(new View.OnClickListener() {
