@@ -230,7 +230,7 @@ public class PlayActivity extends Activity {
     public void hitControl(int i) {
         for (int j = 0; j < proiettileList.size(); j++) {
             if (bombaList.get(i).getTirante() == proiettileList.get(j).getTirante()) {
-                if ((bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()) || (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()-1)){
+                if ((bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()) || (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()-1) || (bombaList.get(i).getPos1() == proiettileList.get(j).getPos2()-2)){
                     bombaList.remove(i);
                     proiettileList.remove(j);
                     carro.upScore();
@@ -240,6 +240,7 @@ public class PlayActivity extends Activity {
             }
         }
     }
+
     public void ring() {
         try {
 
@@ -271,11 +272,14 @@ public class PlayActivity extends Activity {
                 }
                 if (ringCount == anello.getStop()) {
                     ringCount++;
-                    // incrementiamo lo step bombe e cambiare anello
+                    // incrementiamo lo step bombe e cambiamo anello
                     anello.setAnello(anello.getAnello()+1);
                     anello.setStep(anello.getAnello());
                     stepBomba++;
                 }
+            }
+            if(anello.getAnello()==4){
+                seconds=-1; // forzato per aprire activity win
             }
         } catch (Exception e) {
 //            e.printStackTrace();
@@ -340,7 +344,7 @@ public class PlayActivity extends Activity {
                             sug=s.getTempo();
                             tvSecond.setTextColor(Color.RED);
                         }
-                    } else {
+                    } else if(seconds==0) {
                         game_over = true;
                         timer.cancel();
                         timerBomba.cancel();
@@ -352,6 +356,17 @@ public class PlayActivity extends Activity {
                         startActivity(activity_gameover);
                         handler.removeCallbacks(runnable);
                         //finish();
+                    } else if(seconds==-1){
+                        Intent activity_win = new Intent(PlayActivity.this, WinActivity.class);
+                        Bundle b = new Bundle();
+                        b.putInt("score", punteggio); //Your id
+                        activity_win.putExtras(b);//Put your id to your next Intent
+                        startActivity(activity_win);
+                        timer.cancel();
+                        timerBomba.cancel();
+                        timerTask.cancel();
+                        timerTaskBomba.cancel();
+                        handler.removeCallbacks(runnable);
                     }
 
                 } catch (Exception e) {
@@ -669,7 +684,3 @@ public class PlayActivity extends Activity {
     }
 
 }
-
-//to do:
-// - istruzioni
-// - classifica

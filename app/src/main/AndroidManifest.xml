@@ -24,11 +24,15 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".PlayActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:noHistory="true"/>
         <activity
             android:name=".Instruction_Activity"
             android:screenOrientation="landscape" />
-        <activity android:name=".GameOverActivity"
+        <activity
+            android:name=".GameOverActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".WinActivity"
             android:screenOrientation="landscape"></activity>
     </application>
 
