@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +44,7 @@ public class PlayActivity extends Activity {
     private Button imageCannone;
     private int posizioneAttuale = 1;
     private boolean game_over = false;
+    private boolean win = false;
     private ArrayList<Proiettile> proiettileList = new ArrayList<Proiettile>();
     private ArrayList<Bomba> bombaList = new ArrayList<Bomba>();
     private Timer timer, timerBomba;
@@ -241,6 +241,7 @@ public class PlayActivity extends Activity {
         }
     }
 
+    //coloriamo gli anelli ogni volta che distruggiamo una bomba
     public void ring() {
         try {
 
@@ -357,6 +358,8 @@ public class PlayActivity extends Activity {
                         handler.removeCallbacks(runnable);
                         //finish();
                     } else if(seconds==-1){
+                        win = true;
+                        setDisplayPixels();
                         Intent activity_win = new Intent(PlayActivity.this, WinActivity.class);
                         Bundle b = new Bundle();
                         b.putInt("score", punteggio); //Your id
@@ -416,6 +419,12 @@ public class PlayActivity extends Activity {
                 tempBMP = BitmapFactory.decodeResource(
                         getResources(),
                         R.drawable.gameover);
+            }
+
+            if (win == true) {
+                tempBMP = BitmapFactory.decodeResource(
+                        getResources(),
+                        R.drawable.youwin);
             }
             tempBMP = Bitmap.createScaledBitmap(tempBMP, 32, 32, false);
             int[] pixels = new int[tempBMP.getHeight() * tempBMP.getWidth()];

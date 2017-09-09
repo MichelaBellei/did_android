@@ -87,16 +87,22 @@
             <Button
                 android:id="@+id/play_again_button"
                 android:layout_width="0dp"
-                android:layout_weight="0.3"
+                android:layout_weight="0.25"
                 android:layout_height="match_parent"
                 android:background="@drawable/play_again" />
 
             <Button
                 android:id="@+id/exit_button"
                 android:layout_width="0dp"
-                android:layout_weight="0.3"
+                android:layout_weight="0.25"
                 android:layout_height="match_parent"
                 android:background="@drawable/exit" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2">
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
